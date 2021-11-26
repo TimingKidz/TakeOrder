@@ -24,6 +24,7 @@ class MemoDbProvider {
     var table = await db.rawQuery("SELECT MAX(${DbProvider.memoID})+1 as id FROM ${DbProvider.memoTable}");
     int id = int.tryParse(table.first["id"].toString()) ?? 0;
     //insert to the table using the new id
+    if(newMemo.memoContent!.isEmpty) newMemo.memoContent = "MEMO #$id";
     await db.rawInsert(
         "INSERT Into ${DbProvider.memoTable} ("
             "${DbProvider.memoID},"

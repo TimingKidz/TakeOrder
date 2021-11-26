@@ -3,7 +3,7 @@ import 'package:invoice_manage/blocs/categoriesBloc.dart';
 import 'package:invoice_manage/blocs/memoBloc.dart';
 import 'package:invoice_manage/model/catagories.dart';
 import 'package:invoice_manage/model/memo.dart';
-import 'package:invoice_manage/pages/addOrEditMemoPage.dart';
+import 'package:invoice_manage/pages/addMemoPage.dart';
 import 'package:invoice_manage/pages/categoriesPage.dart';
 import 'package:invoice_manage/pages/memoViewPage.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
@@ -114,7 +114,7 @@ class _MemoPageState extends State<MemoPage> {
         backgroundColor: Colors.orange,
         onPressed: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AddOrEditMemo(memoBloc: memoBloc, cateBloc: cateBloc)),
+          MaterialPageRoute(builder: (context) => AddMemo(memoBloc: memoBloc, cateBloc: cateBloc)),
         ),
         child: Icon(Icons.add),
       ),

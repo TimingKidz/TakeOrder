@@ -110,6 +110,7 @@ class _MemoViewPageState extends State<MemoViewPage> {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: TextFormField(
+            expands: true,
             controller: content,
             style: Theme.of(context).textTheme.headline6,
             decoration: InputDecoration.collapsed(

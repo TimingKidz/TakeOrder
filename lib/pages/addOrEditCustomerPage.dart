@@ -37,6 +37,8 @@ class _AddOrEditCustomerPageState extends State<AddOrEditCustomerPage> {
       mobileNum.text = widget.cusToEdit?.mobileNum ?? "";
       address.text = widget.cusToEdit?.address ?? "";
       dropdownValue = widget.cusToEdit?.cusCateName ?? "None";
+    }else{
+      dropdownValue = widget.cusBloc.dropdownValue == "All" || widget.cusBloc.dropdownValue == "Unfiled" ? "None" : widget.cusBloc.dropdownValue;
     }
   }
 

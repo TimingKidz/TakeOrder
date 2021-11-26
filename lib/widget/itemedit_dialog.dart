@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ItemEditDialog extends StatefulWidget {
   final TextEditingController listPrice;
@@ -31,6 +32,7 @@ class _ItemEditDialogState extends State<ItemEditDialog> {
                   labelText: "List Price",
                   border: OutlineInputBorder()
               ),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (val) {
                 if(val!.isNotEmpty) return null;
                 else return "This can't be empty.";

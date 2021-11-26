@@ -3,19 +3,17 @@ import 'package:invoice_manage/blocs/categoriesBloc.dart';
 import 'package:invoice_manage/blocs/memoBloc.dart';
 import 'package:invoice_manage/model/memo.dart';
 
-class AddOrEditMemo extends StatefulWidget {
+class AddMemo extends StatefulWidget {
   final MemoBloc memoBloc;
   final CategoriesBloc cateBloc;
-  final Memo? memoToEdit;
 
-  const AddOrEditMemo({Key? key, required this.memoBloc, this.memoToEdit, required this.cateBloc}) : super(key: key);
+  const AddMemo({Key? key, required this.memoBloc, required this.cateBloc}) : super(key: key);
 
   @override
-  _AddOrEditMemoState createState() => _AddOrEditMemoState();
+  _AddMemoState createState() => _AddMemoState();
 }
 
-class _AddOrEditMemoState extends State<AddOrEditMemo> {
-  bool isAddTrue = true;
+class _AddMemoState extends State<AddMemo> {
   String dropdownValue = "None";
 
   var content = TextEditingController();
@@ -23,11 +21,7 @@ class _AddOrEditMemoState extends State<AddOrEditMemo> {
   @override
   void initState() {
     super.initState();
-    isAddTrue = widget.memoToEdit == null ? true : false;
-    if(!isAddTrue){
-      content.text = widget.memoToEdit?.memoContent ?? "";
-      dropdownValue = widget.memoToEdit?.memoCateName ?? "None";
-    }
+    dropdownValue = widget.memoBloc.dropdownValue == "All" || widget.memoBloc.dropdownValue == "Unfiled" ? "None" : widget.memoBloc.dropdownValue;
   }
 
   @override
@@ -35,7 +29,7 @@ class _AddOrEditMemoState extends State<AddOrEditMemo> {
     List<DropdownMenuItem<String>> allCate = widget.cateBloc.genDropdownMenu();
     return Scaffold(
       appBar: AppBar(
-        title: Text(isAddTrue ? "Add Memo" : "Edit Memo"),
+        title: Text("Add Memo"),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -91,7 +85,7 @@ class _AddOrEditMemoState extends State<AddOrEditMemo> {
               memoContent: content.text,
               memoCateID: cateID
           );
-          isAddTrue ? await widget.memoBloc.add(memo) : await widget.memoBloc.update(widget.memoToEdit ?? Memo(), memo);
+          await widget.memoBloc.add(memo);
           Navigator.pop(context, memo);
         },
         child: Icon(Icons.check),
@@ -99,6 +93,7 @@ class _AddOrEditMemoState extends State<AddOrEditMemo> {
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 92.0),
         child: TextFormField(
+          expands: true,
           scrollPhysics: BouncingScrollPhysics(),
           controller: content,
           style: Theme.of(context).textTheme.headline6,

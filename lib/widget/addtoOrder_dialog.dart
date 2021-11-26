@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AddToOrderDialog extends StatefulWidget {
   final String itemName;
@@ -32,6 +33,7 @@ class _AddToOrderDialogState extends State<AddToOrderDialog> {
                   border: OutlineInputBorder()
               ),
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (val) {
                 if(val!.isNotEmpty) return null;
                 else return "This can't be empty.";
