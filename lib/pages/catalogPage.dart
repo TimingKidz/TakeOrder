@@ -117,7 +117,7 @@ class _CatalogPageState extends State<CatalogPage> {
 
   Future<void> editItem(Item item) async {
     itemName.text = item.itemName;
-    itemPrice.text = "${NumberFormat().format(item.itemPrice)}";
+    itemPrice.text = item.itemPrice.toString().split(".").first;
     String t = await showDialog(
         context: context,
         builder: (BuildContext context) => CatalogEditDialog(itemName: itemName, itemPrice: itemPrice)
@@ -142,7 +142,7 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   Future<void> addItemToOrder(Item i) async {
-    listPrice.text = "${NumberFormat().format(i.itemPrice)}";
+    listPrice.text = i.itemPrice.toString().split(".").first;
     qty.text = "1";
     String t = await showDialog(
         context: context,

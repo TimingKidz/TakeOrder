@@ -52,7 +52,7 @@ class _OrderListWidgetState extends State<OrderListWidget> {
   }
 
   Future<void> editItemFromOrder(OrderList data) async {
-    listPrice.text = "${NumberFormat().format(data.listPrice)}";
+    listPrice.text = data.listPrice.toString().split(".").first;
     qty.text = data.qty.toString();
 
     String t = await showDialog(
