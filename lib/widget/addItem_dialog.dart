@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AddItemDialog extends StatefulWidget {
   final TextEditingController itemName;
@@ -44,6 +45,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                   border: OutlineInputBorder()
               ),
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ],
         ),
