@@ -6,6 +6,7 @@ import 'package:invoice_manage/blocs/catalogBloc.dart';
 import 'package:invoice_manage/blocs/orderBloc.dart';
 import 'package:invoice_manage/model/item.dart';
 import 'package:invoice_manage/model/orderList.dart';
+import 'package:invoice_manage/utils/Formatters.dart';
 import 'package:invoice_manage/widget/addItem_dialog.dart';
 import 'package:invoice_manage/widget/addtoOrder_dialog.dart';
 import 'package:invoice_manage/widget/catalogedit_dialog.dart';
@@ -117,7 +118,7 @@ class _CatalogPageState extends State<CatalogPage> {
 
   Future<void> editItem(Item item) async {
     itemName.text = item.itemName;
-    itemPrice.text = item.itemPrice.toString().split(".").first;
+    itemPrice.text = textFieldPriceFormatter(item.itemPrice);
     String t = await showDialog(
         context: context,
         builder: (BuildContext context) => CatalogEditDialog(itemName: itemName, itemPrice: itemPrice)
@@ -142,7 +143,7 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   Future<void> addItemToOrder(Item i) async {
-    listPrice.text = i.itemPrice.toString().split(".").first;
+    listPrice.text = textFieldPriceFormatter(i.itemPrice);
     qty.text = "1";
     String t = await showDialog(
         context: context,

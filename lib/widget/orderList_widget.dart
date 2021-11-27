@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_manage/blocs/orderBloc.dart';
 import 'package:invoice_manage/model/orderList.dart';
+import 'package:invoice_manage/utils/Formatters.dart';
 import 'package:invoice_manage/widget/itemedit_dialog.dart';
 
 class OrderListWidget extends StatefulWidget {
@@ -52,7 +53,7 @@ class _OrderListWidgetState extends State<OrderListWidget> {
   }
 
   Future<void> editItemFromOrder(OrderList data) async {
-    listPrice.text = data.listPrice.toString().split(".").first;
+    listPrice.text = textFieldPriceFormatter(data.listPrice);
     qty.text = data.qty.toString();
 
     String t = await showDialog(
