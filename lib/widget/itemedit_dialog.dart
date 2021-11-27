@@ -32,7 +32,7 @@ class _ItemEditDialogState extends State<ItemEditDialog> {
                   labelText: "List Price",
                   border: OutlineInputBorder()
               ),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
               validator: (val) {
                 if(val!.isNotEmpty) return null;
                 else return "This can't be empty.";

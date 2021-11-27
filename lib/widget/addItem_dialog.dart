@@ -45,7 +45,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                   border: OutlineInputBorder()
               ),
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
             ),
           ],
         ),

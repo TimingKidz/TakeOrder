@@ -45,7 +45,7 @@ class _CatalogEditDialogState extends State<CatalogEditDialog> {
                   border: OutlineInputBorder()
               ),
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
             ),
           ],
         ),

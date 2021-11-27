@@ -33,7 +33,7 @@ class _AddToOrderDialogState extends State<AddToOrderDialog> {
                   border: OutlineInputBorder()
               ),
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
               validator: (val) {
                 if(val!.isNotEmpty) return null;
                 else return "This can't be empty.";
