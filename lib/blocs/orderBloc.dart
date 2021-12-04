@@ -137,7 +137,6 @@ class OrderBloc {
         orders += "${element.qty},${element.itemName},${element.listPrice},${element.listPrice * element.qty}\n";
       });
       String order =
-          "Order#: ${index++}\n"
           "Date: ${dateFormat(element.date)}\n"
           "${element.soldTo != null
           ? 'Sold to: ${element.companyName}\n'
