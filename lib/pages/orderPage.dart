@@ -9,8 +9,9 @@ import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/pages/catalogPage.dart';
 import 'package:invoice_manage/pages/selectCustomerPage.dart';
 import 'package:invoice_manage/widget/deleteOrder_dialog.dart';
-import 'package:invoice_manage/widget/yesno_dialog.dart';
+import 'package:invoice_manage/widget/exports_dialog.dart';
 import 'package:invoice_manage/widget/orderList_widget.dart';
+import 'package:invoice_manage/widget/yesno_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
@@ -308,12 +309,12 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   Future<void> exportsOrder() async {
-    String t = await showDialog(
-      context: context,
-      builder: (BuildContext context) => YesNoDialog(title: "Exports this order")
-    ) ?? "Cancel";
-    if(t == "Yes") {
-      orderBloc.exports();
+    dynamic t = await showDialog(
+            context: context,
+            builder: (BuildContext context) => ExportsDialog()) ??
+        "Cancel";
+    if (t is List<bool>) {
+      orderBloc.exports(t);
     }
   }
 
