@@ -110,7 +110,7 @@ class OrderBloc {
     await OrderDbProvider.db.updateSoldTo(all.elementAt(pageNum-1).orderID, cusID);
     await getOrders();
   }
-  
+
   Future<void> incrementPage() async {
     pageNum += 1;
     prefs?.setInt("page", pageNum);
@@ -118,7 +118,7 @@ class OrderBloc {
     _orderNumController.sink.add(pageNum);
     _orderListController.sink.add(all.elementAt(pageNum-1).list);
   }
-  
+
   Future<void> decrementPage() async {
     pageNum -= 1;
     prefs?.setInt("page", pageNum);
@@ -154,8 +154,10 @@ class OrderBloc {
         memoContent: content,
       );
       await MemoDbProvider.db.newMemo(m); // Each order memo
-    });
+    }).then((_) => _exportSummary());
+  }
 
+  Future<void> _exportSummary() async {
     List<dynamic> info = await OrderDbProvider.db.getSummary();
     String title = "SALES SUMMARY FOR ${dateFormat(DateTime.now())}\n";
     String order = "";
