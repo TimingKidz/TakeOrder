@@ -131,12 +131,13 @@ class OrderBloc {
     int index = 1;
     Future.forEach(all, (Order element) async {
       if(element.list.isEmpty) return;
-      String title = "Order#: ${index++}";
+      String title = "Order#: ${index++}\n";
       String orders = "";
       element.list.forEach((element) {
         orders += "${element.qty},${element.itemName},${element.listPrice},${element.listPrice * element.qty}\n";
       });
-      String content =
+      String order =
+          "Order#: ${index++}\n"
           "Date: ${dateFormat(element.date)}\n"
           "${element.soldTo != null
           ? 'Sold to: ${element.companyName}\n'
@@ -149,15 +150,15 @@ class OrderBloc {
           "$orders"
           "\nTOTAL: ${element.total}"
       ;
+      String content = title + order;
       Memo m = Memo(
-        memoTitle: title,
         memoContent: content,
       );
       await MemoDbProvider.db.newMemo(m); // Each order memo
     });
 
     List<dynamic> info = await OrderDbProvider.db.getSummary();
-    String title = "SALES SUMMARY FOR ${DateFormat('d/M/yy').format(DateTime.now())}";
+    String title = "SALES SUMMARY FOR ${dateFormat(DateTime.now())}\n";
     String order = "";
     info.elementAt(0).forEach((each) {
       order += "${each["qty"]},${each["itemName"]},${each["SubTotal"]}\n";
@@ -166,9 +167,8 @@ class OrderBloc {
     String payTypeTotal = "  Cash Total: ${info.elementAt(2)["Cash Sale"] ?? 0.0}\n"
         "  Invoice Total: ${info.elementAt(2)["Invoice"] ?? 0.0}\n";
 
-    String content = order + "TOTAL: ${info.elementAt(1)}\n" + payTypeTotal;
+    String content = title + order + "TOTAL: ${info.elementAt(1)}\n" + payTypeTotal;
     Memo m = Memo(
-      memoTitle: title,
       memoContent: content,
     );
     await MemoDbProvider.db.newMemo(m); // Summary memo

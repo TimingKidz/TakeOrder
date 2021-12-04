@@ -310,7 +310,7 @@ class _OrderPageState extends State<OrderPage> {
   Future<void> exportsOrder() async {
     String t = await showDialog(
       context: context,
-      builder: (BuildContext context) => YesNoDialog(title: "Exports this order")
+      builder: (BuildContext context) => YesNoDialog(title: "Export...")
     ) ?? "Cancel";
     if(t == "Yes") {
       orderBloc.exports();
