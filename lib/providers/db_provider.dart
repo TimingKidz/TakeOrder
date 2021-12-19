@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:invoice_manage/providers/DatabaseInitialScript.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbProvider {
@@ -53,13 +54,16 @@ class DbProvider {
   static final memoItemName = "memoItemName";
   static final memoItemPrice = "memoItemPrice";
 
+  static final initialScript = DatabaseInitialScript.initialScript;
+  static final migrationScript = [];
+
   DbProvider._();
 
   static final DbProvider db = DbProvider._();
 
   Future<void> deleteDb() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    final path = join(directory.path,"database.db");
+    final path = join(directory.path, "database.db");
     await deleteDatabase(path);
   }
 
@@ -77,87 +81,15 @@ class DbProvider {
         path,
         version: 1,
         onCreate: (Database db,int version) async {
-          await db.execute("""
-          CREATE TABLE $categoriesTable (
-            $cateID	INTEGER NOT NULL,
-            $cateName TEXT NOT NULL UNIQUE,
-            PRIMARY KEY($cateID)
-          );
-          """);
+          initialScript.forEach((script) async => await db.execute(script));
 
-          await db.execute("""
-          CREATE TABLE $catalogTable (
-            $itemID	INTEGER NOT NULL,
-            $itemName TEXT NOT NULL UNIQUE,
-            $itemPrice REAL NOT NULL,
-            PRIMARY KEY($itemID)
-          );
-          """);
+        await db.rawInsert(
+            "INSERT Into $orderHeadTable ($orderID,$payType,$total,$date)"
+            " VALUES (?,?,?,?)",
+            [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
 
-          await db.execute("""
-          CREATE TABLE $customerTable (
-            $cusID	INTEGER NOT NULL,
-            $companyName	TEXT,
-            $cusName	TEXT,
-            $workNum	VARCHAR(10),
-            $mobileNum	VARCHAR(10),
-            $address	TEXT,
-            $cusCateID	INTEGER,
-            FOREIGN KEY($cusCateID) REFERENCES $categoriesTable($cateID) ON DELETE SET NULL,
-            PRIMARY KEY($cusID)
-          );
-          """);
-
-          await db.execute("""
-          CREATE TABLE $orderHeadTable (
-            $orderID	INTEGER NOT NULL,
-            $payType	TEXT NOT NULL,
-            $soldTo	INTEGER,
-            $total	REAL NOT NULL,
-            $date TEXT NOT NULL,
-            PRIMARY KEY($orderID),
-            FOREIGN KEY($soldTo) REFERENCES $customerTable($cusID) ON DELETE CASCADE
-          );
-          """);
-
-          await db.execute("""
-          CREATE TABLE $orderListTable (
-            $orderID	INTEGER NOT NULL,
-            $itemID	INTEGER NOT NULL,
-            $listPrice	REAL NOT NULL,
-            $qty	INTEGER NOT NULL,
-            FOREIGN KEY($orderID) REFERENCES $orderHeadTable($orderID) ON DELETE CASCADE,
-            FOREIGN KEY($itemID) REFERENCES $catalogTable($itemID) ON DELETE CASCADE
-          );
-          """);
-
-          await db.execute("""
-          CREATE TABLE $memoTable (
-            $memoID	INTEGER NOT NULL,
-            $memoTitle	TEXT,
-            $memoContent	TEXT,
-            $memoCateID	INTEGER,
-            FOREIGN KEY($memoCateID) REFERENCES $categoriesTable($cateID) ON DELETE SET NULL,
-            PRIMARY KEY($memoID)
-          );
-          """);
-
-          // await db.execute("""
-          // CREATE TABLE $memoListTable (
-          //   $memoID	INTEGER NOT NULL,
-          //   $memoItemName	TEXT NOT NULL,
-          //   $memoItemPrice	REAL NOT NULL,
-          //   FOREIGN KEY($memoID) REFERENCES $memoListTable($memoID) ON DELETE CASCADE
-          // );
-          // """);
-
-          await db.rawInsert(
-              "INSERT Into $orderHeadTable ($orderID,$payType,$total,$date)"
-                  " VALUES (?,?,?,?)",
-              [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
-
-          debugPrint('Finished Initial Database Table');
-        },
+        debugPrint('Finished Initial Database Table');
+      },
       onConfigure: (Database db) async {
         await db.execute('PRAGMA foreign_keys = ON');
         debugPrint('Configure Database Completed');
