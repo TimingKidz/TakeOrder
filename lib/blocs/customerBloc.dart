@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:contacts_service/contacts_service.dart';
 import 'package:invoice_manage/model/customer.dart';
 import 'package:invoice_manage/providers/customer_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,17 +12,22 @@ class CustomerBloc {
 
   SharedPreferences? prefs;
   List<Customer> all = [];
+  Iterable<Contact> contacts = [];
   List<Customer> focus = [];
   String dropdownValue = "All";
   late Customer fCus;
 
   final _customerController = StreamController<List<Customer>>.broadcast();
+  final _cController = StreamController<Iterable<Contact>>.broadcast();
 
   get customer => _customerController.stream;
+  get c => _cController.stream;
 
   getCustomer() async {
     if(prefs == null) prefs = await SharedPreferences.getInstance();
     all = await CustomerDbProvider.db.getAllCustomer();
+    contacts = await ContactsService.getContacts(withThumbnails: false);
+    _cController.sink.add(contacts);
     String f = prefs?.getString("cusCate") ?? "All";
     dropdownValue = f;
     filter();
@@ -76,5 +82,6 @@ class CustomerBloc {
 
   dispose() {
     _customerController.close();
+    _cController.close();
   }
 }
