@@ -86,9 +86,9 @@ class OrderBloc {
   }
 
   Future<void> add(OrderList orderItem) async {
-    List<double> value = await OrderDbProvider.db.newItem(orderItem);
-    await OrderDbProvider.db.updateTotal(orderItem.orderID,
-        all.elementAt(pageNum - 1).total + value.first - value.last);
+    double itemTotal = await OrderDbProvider.db.newItem(orderItem);
+    await OrderDbProvider.db.updateTotal(
+        orderItem.orderID, all.elementAt(pageNum - 1).total + itemTotal);
     await getOrders();
   }
 
