@@ -112,39 +112,20 @@ class OrderDbProvider {
         [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
   }
 
-  Future<List<double>> newItem(OrderList newItem) async {
+  Future<double> newItem(OrderList newItem) async {
     final db = await DbProvider.db.database;
 
     updateTime(newItem.orderID);
 
-    var raw = await db.rawQuery("""
-      SELECT COUNT(*) as count, ${DbProvider.listPrice}, ${DbProvider.qty}
-      FROM ${DbProvider.orderListTable}
-      WHERE ${DbProvider.orderID} == ${newItem.orderID}
-      AND ${DbProvider.itemID} == ${newItem.itemID}
-    """);
-
-    bool isDuplicate = int.parse(raw.first["count"].toString()) > 0;
     double lPrice = newItem.listPrice;
     int qty = newItem.qty;
 
-    if (!isDuplicate) {
-      await db.rawInsert(
-          "INSERT Into ${DbProvider.orderListTable} (${DbProvider.orderID},${DbProvider.itemID},${DbProvider.listPrice},${DbProvider.qty})"
-              " VALUES (?,?,?,?)",
-          [newItem.orderID, newItem.itemID, newItem.listPrice, newItem.qty]
-      );
-    }else{
-      await db.rawQuery("""
-        UPDATE ${DbProvider.orderListTable}
-        SET ${DbProvider.listPrice} = ${newItem.listPrice},
-            ${DbProvider.qty} = ${DbProvider.qty} + ${newItem.qty}
-        WHERE ${DbProvider.orderID} = ${newItem.orderID}
-        AND ${DbProvider.itemID} = ${newItem.itemID}
-      """);
-      qty += int.parse(raw.first[DbProvider.qty].toString());
-    }
-    return [lPrice * qty, int.parse(raw.first[DbProvider.qty]?.toString() ?? "0") * double.parse(raw.first[DbProvider.listPrice]?.toString() ?? "0")];
+    await db.rawInsert(
+        "INSERT Into ${DbProvider.orderListTable} (${DbProvider.orderID},${DbProvider.itemID},${DbProvider.listPrice},${DbProvider.qty})"
+        " VALUES (?,?,?,?)",
+        [newItem.orderID, newItem.itemID, newItem.listPrice, newItem.qty]);
+
+    return lPrice * qty;
   }
 
   Future<double> updateItem(OrderList upItem, double listPrice, int qty) async {
