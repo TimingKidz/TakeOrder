@@ -133,9 +133,8 @@ class OrderDbProvider {
     await db.update(
         DbProvider.orderListTable,
         {DbProvider.listPrice: listPrice, DbProvider.qty: qty},
-        where: "${DbProvider.orderID} = ? AND ${DbProvider.itemID} = ?",
-        whereArgs: [upItem.orderID, upItem.itemID]
-    );
+        where: "${DbProvider.orderListId} = ?",
+        whereArgs: [upItem.orderListID]);
     return listPrice * qty;
   }
 
@@ -143,9 +142,8 @@ class OrderDbProvider {
     final db = await DbProvider.db.database;
     await db.delete(
         DbProvider.orderListTable,
-        where: "${DbProvider.orderID} = ? AND ${DbProvider.itemID} = ?",
-        whereArgs: [delItem.orderID, delItem.itemID]
-    );
+        where: "${DbProvider.orderListId} = ?",
+        whereArgs: [delItem.orderListID]);
     return delItem.listPrice * delItem.qty;
   }
 
