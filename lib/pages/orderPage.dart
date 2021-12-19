@@ -3,17 +3,19 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_manage/blocs/orderBloc.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/pages/catalogPage.dart';
 import 'package:invoice_manage/pages/selectCustomerPage.dart';
+import 'package:invoice_manage/widget/InfomationDialog.dart';
 import 'package:invoice_manage/widget/deleteOrder_dialog.dart';
 import 'package:invoice_manage/widget/exports_dialog.dart';
 import 'package:invoice_manage/widget/orderList_widget.dart';
 import 'package:invoice_manage/widget/yesno_dialog.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
+import 'package:sqflite/sqflite.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({Key? key}) : super(key: key);
@@ -319,8 +321,9 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   Future<void> databaseManagement() async {
-    double w = MediaQuery.of(context).size.width/3;
-    Directory directory = await getApplicationDocumentsDirectory(); //returns a directory which stores permanent files
+    double w = MediaQuery.of(context).size.width / 3;
+    String databasePath =
+        await getDatabasesPath(); //returns a directory which stores permanent files
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -343,7 +346,7 @@ class _OrderPageState extends State<OrderPage> {
                     ),
                     onTap: () async {
                       Share.shareFiles(
-                        ['${directory.path}/database.db'],
+                        ['$databasePath/database.db'],
                         subject: 'Database',
                         // sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size
                       );
@@ -371,8 +374,10 @@ class _OrderPageState extends State<OrderPage> {
 
                       if(result != null) {
                         File file = File(result.files.single.path ?? "");
-                        file.copy('${directory.path}/database.db');
-                        await orderBloc.getOrders();
+                        file.copy('$databasePath/database.db');
+                        Navigator.of(context).pop();
+                        await importInformationDialog();
+                        SystemNavigator.pop();
                       }
                       Navigator.of(context).pop();
                     },
@@ -381,7 +386,13 @@ class _OrderPageState extends State<OrderPage> {
               ],
             ),
           );
-        }
-    );
+        });
+  }
+
+  Future<void> importInformationDialog() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            InformationDialog(content: "Please re-open application."));
   }
 }

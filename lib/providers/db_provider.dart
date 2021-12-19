@@ -71,15 +71,16 @@ class DbProvider {
   }
 
   static Database? _database;
+
   Future<Database> get database async {
     // await deleteDb(); // For test purpose.
     return _database ??= await _init();
   }
 
   Future<Database> _init() async {
-    Directory directory =
-        await getApplicationDocumentsDirectory(); //returns a directory which stores permanent files
-    final path = join(directory.path, "database.db"); //create path to database
+    String databasePath =
+        await getDatabasesPath(); //returns a directory which stores permanent files
+    final path = join(databasePath, "database.db"); //create path to database
 
     return await openDatabase(
       //open the database or create a database if there isn't any
@@ -96,14 +97,15 @@ class DbProvider {
         debugPrint('Finished Initial Database Table');
       },
       onUpgrade: (Database db, int oldVersion, int newVersion) async {
-        debugPrint("$oldVersion, $newVersion");
-        for (var i = oldVersion - 1; i < newVersion - 1; i++) {
-          migrationScripts[i].forEach((script) async {
-            await db.execute(script);
-          });
-          await db.batch().commit();
-          debugPrint('Migration scripts ${i + 1}');
-        }
+        db.transaction((txn) async {
+          debugPrint("$oldVersion, $newVersion");
+          for (var i = oldVersion - 1; i < newVersion - 1; i++) {
+            migrationScripts[i].forEach((script) async {
+              await txn.execute(script);
+            });
+            debugPrint('Migration scripts ${i + 1}');
+          }
+        });
       },
       onConfigure: (Database db) async {
         await db.execute('PRAGMA foreign_keys = ON');
