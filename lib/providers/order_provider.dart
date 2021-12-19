@@ -45,12 +45,6 @@ class OrderDbProvider {
       });
     }
 
-    list.forEach((order) {
-      order.list.forEach((orderList) {
-        print(orderList.orderListID);
-      });
-    });
-
     return list;
   }
 
