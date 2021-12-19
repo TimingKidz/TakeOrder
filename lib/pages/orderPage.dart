@@ -42,9 +42,9 @@ class _OrderPageState extends State<OrderPage> {
           stream: orderBloc.order,
           builder: (BuildContext context, AsyncSnapshot<Order> snapshot) {
             return GestureDetector(
-              child: Text(snapshot.data?.companyName ?? "Take An Order!"),
-              onLongPress: () => databaseManagement(),
-            );
+              child: Text(snapshot.data?.soldTo ?? "Take An Order!"),
+                onLongPress: () => databaseManagement(),
+              );
           }
         ),
         actions: [
@@ -179,6 +179,7 @@ class _OrderPageState extends State<OrderPage> {
                 ),
                 MaterialButton(
                   onPressed: () async {
+                    // TODO: Request contact permission from user.
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => SelectCustomerPage()),

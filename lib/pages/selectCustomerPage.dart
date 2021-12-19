@@ -1,8 +1,7 @@
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice_manage/blocs/customerBloc.dart';
-import 'package:invoice_manage/model/customer.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
-import 'package:contacts_service/contacts_service.dart';
 
 class SelectCustomerPage extends StatefulWidget {
   const SelectCustomerPage({Key? key}) : super(key: key);
@@ -33,8 +32,9 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
             child: SearchBar(bloc: customerBloc),
           ),
           StreamBuilder<Iterable<Contact>>(
-              stream: customerBloc.c,
-              builder: (BuildContext context, AsyncSnapshot<Iterable<Contact>> snapshot) {
+              stream: customerBloc.customer,
+              builder: (BuildContext context,
+                  AsyncSnapshot<Iterable<Contact>> snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data!.isNotEmpty) {
                     return Expanded(
@@ -42,8 +42,17 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
                         itemCount: snapshot.data?.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
-                            title: Text(snapshot.data?.elementAt(index).displayName ?? ""),
-                            subtitle: Text(snapshot.data?.elementAt(index).phones?.first.value ?? ""),
+                            title: Text(
+                                snapshot.data?.elementAt(index).displayName ??
+                                    ""),
+                            subtitle: Text(snapshot.data
+                                    ?.elementAt(index)
+                                    .phones
+                                    ?.first
+                                    .value ??
+                                ""),
+                            onTap: () => Navigator.pop(context,
+                                snapshot.data?.elementAt(index).displayName),
                             // onTap: () => Navigator.pop(context, snapshot.data![index].cusID),
                           );
                         },

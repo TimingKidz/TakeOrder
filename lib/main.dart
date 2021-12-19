@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:invoice_manage/pages/customerPage.dart';
 import 'package:invoice_manage/pages/memoPage.dart';
 import 'package:invoice_manage/pages/orderPage.dart';
 
@@ -69,9 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> pageRoute = [
     MemoPage(),
-    OrderPage(),
-    CustomerPage()
-  ];
+    OrderPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -94,10 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.sticky_note_2),
               label: "Order"
           ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.contacts),
-              label: "Contact"
-          ),
         ],
       ),
       body: pageRoute[_currentPage],
@@ -105,8 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Color selectColor(){
-    if(_currentPage == 0) return Colors.orange;
-    else if(_currentPage == 1) return Colors.blue;
-    else return Colors.green;
+    if (_currentPage == 0)
+      return Colors.orange;
+    else
+      return Colors.blue;
   }
 }

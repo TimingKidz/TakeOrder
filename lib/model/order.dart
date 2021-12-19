@@ -4,24 +4,18 @@ import 'package:invoice_manage/providers/db_provider.dart';
 class Order {
   late int orderID;
   late String payType;
-  int? soldTo;
-  String? companyName;
+  String? soldTo;
   late double total;
   DateTime date;
   late List<OrderList> list;
-  String? cusName;
-  String? address;
 
   Order({
     required this.orderID,
     required this.payType,
     this.soldTo,
-    this.companyName,
     required this.total,
     required this.date,
     required this.list,
-    this.address,
-    this.cusName
   });
 
   factory Order.fromMap(Map<String, dynamic> json) {
@@ -29,11 +23,8 @@ class Order {
       orderID: json[DbProvider.orderID],
       payType: json[DbProvider.payType],
       soldTo: json[DbProvider.soldTo] ?? null,
-      companyName: json[DbProvider.companyName] ?? null,
       total: json[DbProvider.total],
       date: DateTime.parse(json[DbProvider.date]),
-      cusName: json[DbProvider.cusName] ?? null,
-      address: json[DbProvider.address] ?? null,
       list: []
     );
   }

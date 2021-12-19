@@ -21,13 +21,6 @@ class DbProvider {
 
   // Customer Table Variables
   static final customerTable = "Customer";
-  static final cusID = "cusID";
-  static final companyName = "companyName";
-  static final cusName = "cusName";
-  static final workNum = "workNum";
-  static final mobileNum = "mobileNum";
-  static final address = "address";
-  static final cusCateID = "cusCateID";
 
   // OrderHead Table Variables
   static final orderHeadTable = "OrderHead";

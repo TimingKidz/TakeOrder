@@ -15,12 +15,8 @@ class OrderDbProvider {
       ${DbProvider.payType},
       ${DbProvider.soldTo},
       ${DbProvider.total},
-      ${DbProvider.date},
-      ${DbProvider.companyName},
-      ${DbProvider.cusName},
-      ${DbProvider.address}
+      ${DbProvider.date}
       FROM ${DbProvider.orderHeadTable}
-      LEFT JOIN ${DbProvider.customerTable} ON ${DbProvider.soldTo} == ${DbProvider.cusID}
     ''');
     List<Order> list = res.isNotEmpty ? res.map((c) => Order.fromMap(c)).toList() : [];
 
