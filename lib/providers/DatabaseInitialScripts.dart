@@ -4,7 +4,6 @@ class DatabaseInitialScript {
   static final initialScripts = [
     _createCategoriesTable,
     _createCatalogTable,
-    _createCustomerTable,
     _createOrderHeadTable,
     _createOrderListTable,
     _createMemoTable
@@ -27,29 +26,14 @@ class DatabaseInitialScript {
           );
           """;
 
-  static final _createCustomerTable = """
-          CREATE TABLE ${DbProvider.customerTable} (
-            ${DbProvider.cusID}	INTEGER NOT NULL,
-            ${DbProvider.companyName}	TEXT,
-            ${DbProvider.cusName}	TEXT,
-            ${DbProvider.workNum}	VARCHAR(10),
-            ${DbProvider.mobileNum}	VARCHAR(10),
-            ${DbProvider.address}	TEXT,
-            ${DbProvider.cusCateID}	INTEGER,
-            FOREIGN KEY(${DbProvider.cusCateID}) REFERENCES ${DbProvider.categoriesTable}(${DbProvider.cateID}) ON DELETE SET NULL,
-            PRIMARY KEY(${DbProvider.cusID})
-          );
-          """;
-
   static final _createOrderHeadTable = """
           CREATE TABLE ${DbProvider.orderHeadTable} (
             ${DbProvider.orderID}	INTEGER NOT NULL,
             ${DbProvider.payType}	TEXT NOT NULL,
-            ${DbProvider.soldTo}	INTEGER,
+            ${DbProvider.soldTo}	TEXT,
             ${DbProvider.total}	REAL NOT NULL,
             ${DbProvider.date} TEXT NOT NULL,
-            PRIMARY KEY(${DbProvider.orderID}),
-            FOREIGN KEY(${DbProvider.soldTo}) REFERENCES ${DbProvider.customerTable}(${DbProvider.cusID}) ON DELETE CASCADE
+            PRIMARY KEY(${DbProvider.orderID})
           );
           """;
 
