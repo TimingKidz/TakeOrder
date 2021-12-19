@@ -61,6 +61,7 @@ class DbProvider {
 
   static final DbProvider db = DbProvider._();
 
+  // For test purpose.
   Future<void> deleteDb() async {
     Directory directory = await getApplicationDocumentsDirectory();
     final path = join(directory.path, "database.db");
@@ -69,7 +70,7 @@ class DbProvider {
 
   static Database? _database;
   Future<Database> get database async {
-    // await deleteDb();
+    // await deleteDb(); // For test purpose.
     return _database ??= await _init();
   }
 
