@@ -1,7 +1,7 @@
 import 'db_provider.dart';
 
 class DatabaseInitialScript {
-  static final initialScript = [
+  static final initialScripts = [
     _createCategoriesTable,
     _createCatalogTable,
     _createCustomerTable,

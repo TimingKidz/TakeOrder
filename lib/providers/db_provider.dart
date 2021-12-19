@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:invoice_manage/providers/DatabaseInitialScript.dart';
+import 'package:invoice_manage/providers/DatabaseInitialScripts.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -54,8 +54,8 @@ class DbProvider {
   static final memoItemName = "memoItemName";
   static final memoItemPrice = "memoItemPrice";
 
-  static final initialScript = DatabaseInitialScript.initialScript;
-  static final migrationScript = [];
+  static final initialScripts = DatabaseInitialScript.initialScripts;
+  static final migrationScripts = [];
 
   DbProvider._();
 
@@ -75,14 +75,16 @@ class DbProvider {
   }
 
   Future<Database> _init() async {
-    Directory directory = await getApplicationDocumentsDirectory(); //returns a directory which stores permanent files
-    final path = join(directory.path,"database.db"); //create path to database
+    Directory directory =
+        await getApplicationDocumentsDirectory(); //returns a directory which stores permanent files
+    final path = join(directory.path, "database.db"); //create path to database
 
-    return await openDatabase( //open the database or create a database if there isn't any
-        path,
-        version: 1,
-        onCreate: (Database db,int version) async {
-          initialScript.forEach((script) async => await db.execute(script));
+    return await openDatabase(
+      //open the database or create a database if there isn't any
+      path,
+      version: migrationScripts.length + 1,
+      onCreate: (Database db, int version) async {
+        initialScripts.forEach((script) async => await db.execute(script));
 
         await db.rawInsert(
             "INSERT Into $orderHeadTable ($orderID,$payType,$total,$date)"
@@ -90,6 +92,11 @@ class DbProvider {
             [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
 
         debugPrint('Finished Initial Database Table');
+      },
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        for (var i = oldVersion - 1; i <= newVersion - 1; i++) {
+          await db.execute(migrationScripts[i]);
+        }
       },
       onConfigure: (Database db) async {
         await db.execute('PRAGMA foreign_keys = ON');
