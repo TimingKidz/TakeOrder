@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:invoice_manage/providers/DatabaseInitialScripts.dart';
+import 'package:invoice_manage/providers/DatabaseMigrationScripts.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -37,6 +38,7 @@ class DbProvider {
   static final date = "date";
 
   // OrderList Table Variables
+  static final orderListId = "id";
   static final orderListTable = "OrderList";
   static final listPrice = "listPrice";
   static final qty = "qty";
@@ -55,7 +57,7 @@ class DbProvider {
   static final memoItemPrice = "memoItemPrice";
 
   static final initialScripts = DatabaseInitialScript.initialScripts;
-  static final migrationScripts = [];
+  static final migrationScripts = DatabaseMigrationScripts.migrationScripts;
 
   DbProvider._();
 
@@ -94,8 +96,13 @@ class DbProvider {
         debugPrint('Finished Initial Database Table');
       },
       onUpgrade: (Database db, int oldVersion, int newVersion) async {
-        for (var i = oldVersion - 1; i <= newVersion - 1; i++) {
-          await db.execute(migrationScripts[i]);
+        debugPrint("$oldVersion, $newVersion");
+        for (var i = oldVersion - 1; i < newVersion - 1; i++) {
+          migrationScripts[i].forEach((script) async {
+            await db.execute(script);
+          });
+          await db.batch().commit();
+          debugPrint('Migration scripts ${i + 1}');
         }
       },
       onConfigure: (Database db) async {

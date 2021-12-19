@@ -26,7 +26,8 @@ class OrderDbProvider {
 
     // OrderList Insert
     res = await db.rawQuery('''
-      SELECT ${DbProvider.orderHeadTable}.${DbProvider.orderID},
+      SELECT ${DbProvider.orderListId},
+      ${DbProvider.orderHeadTable}.${DbProvider.orderID},
       ${DbProvider.catalogTable}.${DbProvider.itemID},
       ${DbProvider.itemName},
       ${DbProvider.listPrice},
@@ -37,12 +38,18 @@ class OrderDbProvider {
       ORDER BY ${DbProvider.orderHeadTable}.${DbProvider.orderID}
     ''');
 
-    if(res.isNotEmpty){
+    if (res.isNotEmpty) {
       res.forEach((element) {
         OrderList t = OrderList.fromMap(element);
         list.firstWhere((o) => o.orderID == t.orderID).list.add(t);
       });
     }
+
+    list.forEach((order) {
+      order.list.forEach((orderList) {
+        print(orderList.orderListID);
+      });
+    });
 
     return list;
   }
