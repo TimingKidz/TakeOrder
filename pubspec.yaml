@@ -35,6 +35,8 @@ dependencies:
   shared_preferences: ^2.0.6
   share: ^2.0.4
   file_picker: ^3.0.3
+  contacts_service: ^0.6.3
+  permission_handler: ^8.1.6
 
 flutter_icons:
   ios: true

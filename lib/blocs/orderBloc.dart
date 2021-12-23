@@ -149,9 +149,10 @@ class OrderBloc {
               "${element.qty},${element.itemName},${element.listPrice},${element.listPrice * element.qty}\n";
         });
         String order = "Date: ${dateFormat(element.date)}\n"
-            "${element.soldTo != null ? 'Sold to: ${element.companyName}\n'
-                'Name: ${element.cusName}\n'
-                '${element.address != "" ? "${element.address}\n" : ""}' : ''}"
+            "${element.soldTo != null ? 'Sold to: ${element.soldTo}\n'
+                // 'Name: ${element.cusName}\n'
+                // '${element.address != "" ? "${element.address}\n" : ""}'
+                : ''}"
             "Payment: ${element.payType}\n\n"
             "$orders"
             "\nTOTAL: ${element.total}";
