@@ -15,18 +15,15 @@ class OrderDbProvider {
       ${DbProvider.payType},
       ${DbProvider.soldTo},
       ${DbProvider.total},
-      ${DbProvider.date},
-      ${DbProvider.companyName},
-      ${DbProvider.cusName},
-      ${DbProvider.address}
+      ${DbProvider.date}
       FROM ${DbProvider.orderHeadTable}
-      LEFT JOIN ${DbProvider.customerTable} ON ${DbProvider.soldTo} == ${DbProvider.cusID}
     ''');
     List<Order> list = res.isNotEmpty ? res.map((c) => Order.fromMap(c)).toList() : [];
 
     // OrderList Insert
     res = await db.rawQuery('''
-      SELECT ${DbProvider.orderHeadTable}.${DbProvider.orderID},
+      SELECT ${DbProvider.orderListId},
+      ${DbProvider.orderHeadTable}.${DbProvider.orderID},
       ${DbProvider.catalogTable}.${DbProvider.itemID},
       ${DbProvider.itemName},
       ${DbProvider.listPrice},
@@ -37,7 +34,7 @@ class OrderDbProvider {
       ORDER BY ${DbProvider.orderHeadTable}.${DbProvider.orderID}
     ''');
 
-    if(res.isNotEmpty){
+    if (res.isNotEmpty) {
       res.forEach((element) {
         OrderList t = OrderList.fromMap(element);
         list.firstWhere((o) => o.orderID == t.orderID).list.add(t);
@@ -111,39 +108,20 @@ class OrderDbProvider {
         [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
   }
 
-  Future<List<double>> newItem(OrderList newItem) async {
+  Future<double> newItem(OrderList newItem) async {
     final db = await DbProvider.db.database;
 
     updateTime(newItem.orderID);
 
-    var raw = await db.rawQuery("""
-      SELECT COUNT(*) as count, ${DbProvider.listPrice}, ${DbProvider.qty}
-      FROM ${DbProvider.orderListTable}
-      WHERE ${DbProvider.orderID} == ${newItem.orderID}
-      AND ${DbProvider.itemID} == ${newItem.itemID}
-    """);
-
-    bool isDuplicate = int.parse(raw.first["count"].toString()) > 0;
     double lPrice = newItem.listPrice;
     int qty = newItem.qty;
 
-    if (!isDuplicate) {
-      await db.rawInsert(
-          "INSERT Into ${DbProvider.orderListTable} (${DbProvider.orderID},${DbProvider.itemID},${DbProvider.listPrice},${DbProvider.qty})"
-              " VALUES (?,?,?,?)",
-          [newItem.orderID, newItem.itemID, newItem.listPrice, newItem.qty]
-      );
-    }else{
-      await db.rawQuery("""
-        UPDATE ${DbProvider.orderListTable}
-        SET ${DbProvider.listPrice} = ${newItem.listPrice},
-            ${DbProvider.qty} = ${DbProvider.qty} + ${newItem.qty}
-        WHERE ${DbProvider.orderID} = ${newItem.orderID}
-        AND ${DbProvider.itemID} = ${newItem.itemID}
-      """);
-      qty += int.parse(raw.first[DbProvider.qty].toString());
-    }
-    return [lPrice * qty, int.parse(raw.first[DbProvider.qty]?.toString() ?? "0") * double.parse(raw.first[DbProvider.listPrice]?.toString() ?? "0")];
+    await db.rawInsert(
+        "INSERT Into ${DbProvider.orderListTable} (${DbProvider.orderID},${DbProvider.itemID},${DbProvider.listPrice},${DbProvider.qty})"
+        " VALUES (?,?,?,?)",
+        [newItem.orderID, newItem.itemID, newItem.listPrice, newItem.qty]);
+
+    return lPrice * qty;
   }
 
   Future<double> updateItem(OrderList upItem, double listPrice, int qty) async {
@@ -151,9 +129,8 @@ class OrderDbProvider {
     await db.update(
         DbProvider.orderListTable,
         {DbProvider.listPrice: listPrice, DbProvider.qty: qty},
-        where: "${DbProvider.orderID} = ? AND ${DbProvider.itemID} = ?",
-        whereArgs: [upItem.orderID, upItem.itemID]
-    );
+        where: "${DbProvider.orderListId} = ?",
+        whereArgs: [upItem.orderListID]);
     return listPrice * qty;
   }
 
@@ -161,9 +138,8 @@ class OrderDbProvider {
     final db = await DbProvider.db.database;
     await db.delete(
         DbProvider.orderListTable,
-        where: "${DbProvider.orderID} = ? AND ${DbProvider.itemID} = ?",
-        whereArgs: [delItem.orderID, delItem.itemID]
-    );
+        where: "${DbProvider.orderListId} = ?",
+        whereArgs: [delItem.orderListID]);
     return delItem.listPrice * delItem.qty;
   }
 

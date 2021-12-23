@@ -23,29 +23,40 @@ class _OrderListWidgetState extends State<OrderListWidget> {
     return StreamBuilder<List<OrderList>>(
       stream: widget.orderBloc.orderList,
       builder: (BuildContext context, AsyncSnapshot<List<OrderList>> snapshot) {
-        if(snapshot.hasData){
+        if (snapshot.hasData) {
           return ListView.separated(
             itemCount: snapshot.data?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
               OrderList data = snapshot.data![index];
-              return ListTile(
-                leading: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("${data.qty}"),
-                  ],
+              return Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text("${index + 1}",
+                      style: TextStyle(color: Colors.black45, fontSize: 12)),
                 ),
-                title: Text(data.itemName),
-                subtitle: Text(NumberFormat.currency(symbol: "", decimalDigits: 2).format(data.listPrice)),
-                trailing: Text(NumberFormat.currency(symbol: "", decimalDigits: 2).format(data.listPrice * data.qty)),
-                onTap: () => editItemFromOrder(data),
-              );
+                ListTile(
+                  leading: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("${data.qty}"),
+                    ],
+                  ),
+                  title: Text(data.itemName),
+                  subtitle: Text(
+                      NumberFormat.currency(symbol: "", decimalDigits: 2)
+                          .format(data.listPrice)),
+                  trailing: Text(
+                      NumberFormat.currency(symbol: "", decimalDigits: 2)
+                          .format(data.listPrice * data.qty)),
+                  onTap: () => editItemFromOrder(data),
+                ),
+              ]);
             },
             separatorBuilder: (_, index) {
               return Divider(thickness: 1.5);
             },
           );
-        }else{
+        } else {
           return Center(child: CircularProgressIndicator());
         }
       },
@@ -57,12 +68,16 @@ class _OrderListWidgetState extends State<OrderListWidget> {
     qty.text = data.qty.toString();
 
     String t = await showDialog(
-        context: context,
-        builder: (BuildContext context) => ItemEditDialog(listPrice: listPrice, qty: qty, itemName: data.itemName)
-    ) ?? "Cancel";
+            context: context,
+            builder: (BuildContext context) => ItemEditDialog(
+                listPrice: listPrice, qty: qty, itemName: data.itemName)) ??
+        "Cancel";
 
-    if(t == "Delete") widget.orderBloc.delete(data);
-    else if(t == "Update") widget.orderBloc.update(data, double.parse(listPrice.text), int.parse(qty.text));
+    if (t == "Delete")
+      widget.orderBloc.delete(data);
+    else if (t == "Update")
+      widget.orderBloc
+          .update(data, double.parse(listPrice.text), int.parse(qty.text));
 
     listPrice.clear();
     qty.clear();

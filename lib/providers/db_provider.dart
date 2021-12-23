@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:invoice_manage/providers/DatabaseInitialScripts.dart';
+import 'package:invoice_manage/providers/DatabaseMigrationScripts.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbProvider {
@@ -19,13 +21,6 @@ class DbProvider {
 
   // Customer Table Variables
   static final customerTable = "Customer";
-  static final cusID = "cusID";
-  static final companyName = "companyName";
-  static final cusName = "cusName";
-  static final workNum = "workNum";
-  static final mobileNum = "mobileNum";
-  static final address = "address";
-  static final cusCateID = "cusCateID";
 
   // OrderHead Table Variables
   static final orderHeadTable = "OrderHead";
@@ -36,6 +31,7 @@ class DbProvider {
   static final date = "date";
 
   // OrderList Table Variables
+  static final orderListId = "id";
   static final orderListTable = "OrderList";
   static final listPrice = "listPrice";
   static final qty = "qty";
@@ -53,111 +49,57 @@ class DbProvider {
   static final memoItemName = "memoItemName";
   static final memoItemPrice = "memoItemPrice";
 
+  static final initialScripts = DatabaseInitialScript.initialScripts;
+  static final migrationScripts = DatabaseMigrationScripts.migrationScripts;
+
   DbProvider._();
 
   static final DbProvider db = DbProvider._();
 
+  // For test purpose.
   Future<void> deleteDb() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    final path = join(directory.path,"database.db");
+    final path = join(directory.path, "database.db");
     await deleteDatabase(path);
   }
 
   static Database? _database;
+
   Future<Database> get database async {
-    // await deleteDb();
+    // await deleteDb(); // For test purpose.
     return _database ??= await _init();
   }
 
   Future<Database> _init() async {
-    Directory directory = await getApplicationDocumentsDirectory(); //returns a directory which stores permanent files
-    final path = join(directory.path,"database.db"); //create path to database
+    String databasePath =
+        await getDatabasesPath(); //returns a directory which stores permanent files
+    final path = join(databasePath, "database.db"); //create path to database
 
-    return await openDatabase( //open the database or create a database if there isn't any
-        path,
-        version: 1,
-        onCreate: (Database db,int version) async {
-          await db.execute("""
-          CREATE TABLE $categoriesTable (
-            $cateID	INTEGER NOT NULL,
-            $cateName TEXT NOT NULL UNIQUE,
-            PRIMARY KEY($cateID)
-          );
-          """);
+    return await openDatabase(
+      //open the database or create a database if there isn't any
+      path,
+      version: migrationScripts.length + 1,
+      onCreate: (Database db, int version) async {
+        initialScripts.forEach((script) async => await db.execute(script));
 
-          await db.execute("""
-          CREATE TABLE $catalogTable (
-            $itemID	INTEGER NOT NULL,
-            $itemName TEXT NOT NULL UNIQUE,
-            $itemPrice REAL NOT NULL,
-            PRIMARY KEY($itemID)
-          );
-          """);
+        await db.rawInsert(
+            "INSERT Into $orderHeadTable ($orderID,$payType,$total,$date)"
+            " VALUES (?,?,?,?)",
+            [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
 
-          await db.execute("""
-          CREATE TABLE $customerTable (
-            $cusID	INTEGER NOT NULL,
-            $companyName	TEXT,
-            $cusName	TEXT,
-            $workNum	VARCHAR(10),
-            $mobileNum	VARCHAR(10),
-            $address	TEXT,
-            $cusCateID	INTEGER,
-            FOREIGN KEY($cusCateID) REFERENCES $categoriesTable($cateID) ON DELETE SET NULL,
-            PRIMARY KEY($cusID)
-          );
-          """);
-
-          await db.execute("""
-          CREATE TABLE $orderHeadTable (
-            $orderID	INTEGER NOT NULL,
-            $payType	TEXT NOT NULL,
-            $soldTo	INTEGER,
-            $total	REAL NOT NULL,
-            $date TEXT NOT NULL,
-            PRIMARY KEY($orderID),
-            FOREIGN KEY($soldTo) REFERENCES $customerTable($cusID) ON DELETE CASCADE
-          );
-          """);
-
-          await db.execute("""
-          CREATE TABLE $orderListTable (
-            $orderID	INTEGER NOT NULL,
-            $itemID	INTEGER NOT NULL,
-            $listPrice	REAL NOT NULL,
-            $qty	INTEGER NOT NULL,
-            FOREIGN KEY($orderID) REFERENCES $orderHeadTable($orderID) ON DELETE CASCADE,
-            FOREIGN KEY($itemID) REFERENCES $catalogTable($itemID) ON DELETE CASCADE
-          );
-          """);
-
-          await db.execute("""
-          CREATE TABLE $memoTable (
-            $memoID	INTEGER NOT NULL,
-            $memoTitle	TEXT,
-            $memoContent	TEXT,
-            $memoCateID	INTEGER,
-            FOREIGN KEY($memoCateID) REFERENCES $categoriesTable($cateID) ON DELETE SET NULL,
-            PRIMARY KEY($memoID)
-          );
-          """);
-
-          // await db.execute("""
-          // CREATE TABLE $memoListTable (
-          //   $memoID	INTEGER NOT NULL,
-          //   $memoItemName	TEXT NOT NULL,
-          //   $memoItemPrice	REAL NOT NULL,
-          //   FOREIGN KEY($memoID) REFERENCES $memoListTable($memoID) ON DELETE CASCADE
-          // );
-          // """);
-
-          await db.rawInsert(
-              "INSERT Into $orderHeadTable ($orderID,$payType,$total,$date)"
-                  " VALUES (?,?,?,?)",
-              [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
-
-          debugPrint('Finished Initial Database Table');
-        },
+        debugPrint('Finished Initial Database Table');
+      },
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        db.transaction((txn) async {
+          debugPrint("$oldVersion, $newVersion");
+          for (var i = oldVersion - 1; i < newVersion - 1; i++) {
+            migrationScripts[i].forEach((script) async {
+              await txn.execute(script);
+            });
+            debugPrint('Migration scripts ${i + 1}');
+          }
+        });
+      },
       onConfigure: (Database db) async {
         await db.execute('PRAGMA foreign_keys = ON');
         debugPrint('Configure Database Completed');
