@@ -16,6 +16,7 @@ import 'package:invoice_manage/widget/orderList_widget.dart';
 import 'package:invoice_manage/widget/yesno_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class OrderPage extends StatefulWidget {
@@ -380,12 +381,20 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   Future<void> exportsOrder() async {
+    String isJustOrders = "isJustOrders";
+    String isJustSummary = "isJustSummary";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool justOrders = prefs.getBool(isJustOrders) ?? true;
+    bool justSummary = prefs.getBool(isJustSummary) ?? true;
     dynamic t = await showDialog(
             context: context,
-            builder: (BuildContext context) => ExportsDialog()) ??
+            builder: (BuildContext context) => ExportsDialog(
+                justOrders: justOrders, justSummary: justSummary)) ??
         "Cancel";
     if (t is List<bool>) {
       orderBloc.exports(t);
+      prefs.setBool(isJustOrders, t[0]);
+      prefs.setBool(isJustSummary, t[1]);
     }
   }
 

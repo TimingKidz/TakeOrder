@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ExportsDialog extends StatefulWidget {
-  const ExportsDialog({Key? key}) : super(key: key);
+  final bool justOrders;
+  final bool justSummary;
+
+  const ExportsDialog(
+      {Key? key, required this.justOrders, required this.justSummary})
+      : super(key: key);
 
   @override
   _ExportsDialogState createState() => _ExportsDialogState();
@@ -10,6 +15,13 @@ class ExportsDialog extends StatefulWidget {
 class _ExportsDialogState extends State<ExportsDialog> {
   bool justOrders = true;
   bool justSummary = true;
+
+  @override
+  void initState() {
+    super.initState();
+    justOrders = widget.justOrders;
+    justSummary = widget.justSummary;
+  }
 
   @override
   Widget build(BuildContext context) {
