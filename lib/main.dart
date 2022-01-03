@@ -18,8 +18,7 @@ void main() {
       // Here light means dark color Status bar icons.
 
       systemNavigationBarColor: Color(0xfffafafa),
-      systemNavigationBarIconBrightness: Brightness.dark
-    )
+      systemNavigationBarIconBrightness: Brightness.light)
   );
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp
