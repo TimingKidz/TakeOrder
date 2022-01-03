@@ -45,12 +45,6 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
                             title: Text(
                                 snapshot.data?.elementAt(index).displayName ??
                                     ""),
-                            subtitle: Text(snapshot.data
-                                    ?.elementAt(index)
-                                    .phones
-                                    ?.first
-                                    .value ??
-                                ""),
                             onTap: () => Navigator.pop(context,
                                 snapshot.data?.elementAt(index).displayName),
                             // onTap: () => Navigator.pop(context, snapshot.data![index].cusID),

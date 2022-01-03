@@ -446,10 +446,7 @@ class _OrderPageState extends State<OrderPage> {
                     ),
                     onTap: () async {
                       FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        allowedExtensions: ['db'],
-                      );
+                          await FilePicker.platform.pickFiles();
 
                       if (result != null) {
                         File file = File(result.files.single.path ?? "");

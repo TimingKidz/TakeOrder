@@ -28,8 +28,7 @@ class CustomerBloc {
     if (s.isNotEmpty) {
       List<Contact> filter = contacts.where((cus) {
         var displayName = cus.displayName?.toLowerCase() ?? "";
-        var phone = cus.phones?.first.value!.replaceAll(" ", "") ?? "";
-        return displayName.contains(s) || phone.contains(s);
+        return displayName.contains(s);
       }).toList();
       _customerController.sink.add(filter);
     } else{
