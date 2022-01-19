@@ -7,13 +7,23 @@ class SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController searchText = TextEditingController();
+
     return TextField(
+      controller: searchText,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
           prefixIcon: Icon(Icons.search),
           hintText: "Search...",
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))
-      ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: () {
+              searchText.clear();
+              bloc.searchFilter("");
+            },
+            splashRadius: 18.0,
+          )),
       onChanged: (text) {
         text = text.toLowerCase();
         bloc.searchFilter(text);
