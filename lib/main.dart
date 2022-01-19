@@ -6,20 +6,20 @@ import 'package:invoice_manage/pages/orderPage.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      // statusBarColor is used to set Status bar color in Android devices.
-      statusBarColor: Colors.transparent,
+    SystemUiOverlayStyle.dark.copyWith(
+    // statusBarColor is used to set Status bar color in Android devices.
+    statusBarColor: Colors.transparent,
 
-      // To make Status bar icons color white in Android devices.
-      statusBarIconBrightness: Brightness.light,
+    // To make Status bar icons color white in Android devices.
+    // statusBarIconBrightness: Brightness.light,
+    //
+    // // statusBarBrightness is used to set Status bar icon color in iOS.
+    // statusBarBrightness: Brightness.light,
+    // Here light means dark color Status bar icons.
 
-      // statusBarBrightness is used to set Status bar icon color in iOS.
-      statusBarBrightness: Brightness.light,
-      // Here light means dark color Status bar icons.
-
-      systemNavigationBarColor: Color(0xfffafafa),
-      systemNavigationBarIconBrightness: Brightness.light)
-  );
+    // systemNavigationBarColor: Color(0xfffafafa),
+    // systemNavigationBarIconBrightness: Brightness.dark
+  ));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp
   ]);
@@ -34,16 +34,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         appBarTheme: AppBarTheme(
-          // systemOverlayStyle: SystemUiOverlayStyle(
-          //   statusBarColor: Colors.transparent
-          // ),
           backgroundColor: Theme.of(context).canvasColor,
           foregroundColor: Colors.black,
-          // textTheme: Theme.of(context).textTheme,
-          // actionsIconTheme: Theme.of(context).iconTheme,
-          elevation: 0.0,
-          backwardsCompatibility: false
-        ),
+            elevation: 0.0),
         textTheme: TextTheme(
           headline6: TextStyle(fontSize: 20)
         )
