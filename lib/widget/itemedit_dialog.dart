@@ -31,12 +31,16 @@ class _ItemEditDialogState extends State<ItemEditDialog> {
               decoration: InputDecoration(
                   hintText: "List Price",
                   labelText: "List Price",
-                  border: OutlineInputBorder()
-              ),
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
+                  border: OutlineInputBorder()),
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+              ],
               validator: (val) {
-                if(val!.isNotEmpty) return null;
-                else return "This can't be empty.";
+                if (val!.isNotEmpty)
+                  return null;
+                else
+                  return "This can't be empty.";
               },
             ),
             SizedBox(height: 16.0),
@@ -46,6 +50,8 @@ class _ItemEditDialogState extends State<ItemEditDialog> {
                   hintText: "Quantity",
                   labelText: "Quantity",
                   border: OutlineInputBorder()),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (val) {
                 if (val!.isNotEmpty)
                   return null;

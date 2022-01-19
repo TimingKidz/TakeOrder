@@ -45,12 +45,14 @@ class _AddToOrderDialogState extends State<AddToOrderDialog> {
               decoration: InputDecoration(
                   hintText: "Quantity",
                   labelText: "Quantity",
-                  border: OutlineInputBorder()
-              ),
+                  border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (val) {
-                if(val!.isNotEmpty) return null;
-                else return "This can't be empty.";
+                if (val!.isNotEmpty)
+                  return null;
+                else
+                  return "This can't be empty.";
               },
             ),
           ],
