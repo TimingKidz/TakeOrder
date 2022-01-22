@@ -15,6 +15,8 @@ class ItemEditDialog extends StatefulWidget {
 
 class _ItemEditDialogState extends State<ItemEditDialog> {
   final _formKey = GlobalKey<FormState>();
+  var listPriceFocusNode = FocusNode();
+  var qtyFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +30,19 @@ class _ItemEditDialogState extends State<ItemEditDialog> {
           children: [
             TextFormField(
               controller: widget.listPrice,
+              focusNode: listPriceFocusNode,
               decoration: InputDecoration(
                   hintText: "List Price",
                   labelText: "List Price",
-                  border: OutlineInputBorder()),
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      widget.listPrice.clear();
+                      listPriceFocusNode.requestFocus();
+                    },
+                    splashRadius: 18.0,
+                  )),
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
@@ -46,10 +57,19 @@ class _ItemEditDialogState extends State<ItemEditDialog> {
             SizedBox(height: 16.0),
             TextFormField(
               controller: widget.qty,
+              focusNode: qtyFocusNode,
               decoration: InputDecoration(
                   hintText: "Quantity",
                   labelText: "Quantity",
-                  border: OutlineInputBorder()),
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      widget.qty.clear();
+                      qtyFocusNode.requestFocus();
+                    },
+                    splashRadius: 18.0,
+                  )),
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (val) {

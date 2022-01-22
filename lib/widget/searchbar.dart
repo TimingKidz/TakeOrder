@@ -8,9 +8,11 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController searchText = TextEditingController();
+    var textFieldFocusNode = FocusNode();
 
     return TextField(
       controller: searchText,
+      focusNode: textFieldFocusNode,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
           prefixIcon: Icon(Icons.search),
@@ -21,6 +23,7 @@ class SearchBar extends StatelessWidget {
             onPressed: () {
               searchText.clear();
               bloc.searchFilter("");
+              textFieldFocusNode.requestFocus();
             },
             splashRadius: 18.0,
           )),

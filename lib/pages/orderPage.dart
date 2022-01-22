@@ -375,9 +375,21 @@ class _OrderPageState extends State<OrderPage> {
             context: context,
             builder: (BuildContext context) => DeleteOrderDialog()) ??
         "Cancel";
-    if (t == "Delete")
-      orderBloc.deleteOrderHead();
-    else if (t == "DeleteAll") orderBloc.deleteAllOrder();
+    if (t == "Delete") {
+      String t = await showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  YesNoDialog(title: "Delete this order ?")) ??
+          "Cancel";
+      if (t == "Yes") orderBloc.deleteOrderHead();
+    } else if (t == "DeleteAll") {
+      String t = await showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  YesNoDialog(title: "Delete all orders ?")) ??
+          "Cancel";
+      if (t == "Yes") orderBloc.deleteAllOrder();
+    }
   }
 
   Future<void> exportsOrder() async {
