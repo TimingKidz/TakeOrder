@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_manage/blocs/SummaryBloc.dart';
-import 'package:invoice_manage/model/orderList.dart';
+import 'package:invoice_manage/model/OrderItem.dart';
 
 class SummaryListWidget extends StatefulWidget {
   final SummaryBloc summaryBloc;
@@ -14,16 +14,27 @@ class SummaryListWidget extends StatefulWidget {
 }
 
 class _SummaryListWidgetState extends State<SummaryListWidget> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      widget.summaryBloc.isShowKeyboardToggle(false);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<OrderList>>(
+    return StreamBuilder<List<OrderItem>>(
       stream: widget.summaryBloc.allItems,
-      builder: (BuildContext context, AsyncSnapshot<List<OrderList>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<OrderItem>> snapshot) {
         if (snapshot.hasData) {
           return ListView.separated(
+            controller: _controller,
             itemCount: snapshot.data?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
-              OrderList data = snapshot.data!.elementAt(index);
+              OrderItem data = snapshot.data!.elementAt(index);
               return Stack(children: [
                 Padding(
                   padding: const EdgeInsets.all(4.0),
@@ -38,12 +49,9 @@ class _SummaryListWidgetState extends State<SummaryListWidget> {
                     ],
                   ),
                   title: Text(data.itemName),
-                  subtitle: Text(
-                      NumberFormat.currency(symbol: "", decimalDigits: 2)
-                          .format(data.listPrice)),
                   trailing: Text(
                       NumberFormat.currency(symbol: "", decimalDigits: 2)
-                          .format(data.listPrice * data.qty)),
+                          .format(data.subTotal)),
                 ),
               ]);
             },

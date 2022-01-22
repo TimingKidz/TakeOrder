@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:invoice_manage/model/order.dart';
-import 'package:invoice_manage/model/orderList.dart';
+import 'package:invoice_manage/model/OrderItem.dart';
 import 'package:invoice_manage/providers/order_provider.dart';
 
 class SummaryBloc {
@@ -9,48 +8,31 @@ class SummaryBloc {
     getSummary();
   }
 
-  List<OrderList> all = [];
-  List<OrderList> focus = [];
+  List<OrderItem> all = [];
+  List<OrderItem> focus = [];
   double totals = 0;
 
-  final _summaryController = StreamController<List<OrderList>>.broadcast();
+  final _summaryController = StreamController<List<OrderItem>>.broadcast();
   final _summaryTotalController = StreamController<double>.broadcast();
+  final _isShowKeyboardController = StreamController<bool>.broadcast();
 
   get allItems => _summaryController.stream;
 
   get total => _summaryTotalController.stream;
 
+  get isShowKeyboard => _isShowKeyboardController.stream;
+
   getSummary() async {
-    var data = await OrderDbProvider.db.getAllOrders();
-    all = allOrdersList(data);
-    totals = allTotal(data);
+    var data = await OrderDbProvider.db.getSummary();
+    all = data.orderItemList;
+    totals = data.totals;
     _summaryController.sink.add(all);
     _summaryTotalController.sink.add(totals);
   }
 
-  List<OrderList> allOrdersList(List<Order> data) {
-    List<OrderList> finalData = [];
-
-    data.forEach((Order element) {
-      finalData.addAll(element.list);
-    });
-
-    return finalData;
-  }
-
-  double allTotal(List<Order> data) {
-    double totals = 0;
-
-    data.forEach((element) {
-      totals = totals + element.total;
-    });
-
-    return totals;
-  }
-
   Future<void> searchFilter(String s) async {
     if (s.isNotEmpty) {
-      List<OrderList> filter = all.where((item) {
+      List<OrderItem> filter = all.where((item) {
         var title = item.itemName.toLowerCase();
         return title.contains(s);
       }).toList();
@@ -60,8 +42,13 @@ class SummaryBloc {
     }
   }
 
+  void isShowKeyboardToggle(bool isShow) {
+    _isShowKeyboardController.sink.add(isShow);
+  }
+
   dispose() {
     _summaryController.close();
     _summaryTotalController.close();
+    _isShowKeyboardController.close();
   }
 }
