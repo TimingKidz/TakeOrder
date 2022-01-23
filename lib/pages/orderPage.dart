@@ -73,9 +73,16 @@ class _OrderPageState extends State<OrderPage> {
       body: Listener(
         onPointerMove: (moveEvent) {
           int offset = 10;
-          if (moveEvent.delta.dx > offset) {
+          int offsetY = 2;
+          print(moveEvent.delta.dx);
+          print(moveEvent.delta.dy);
+          if (moveEvent.delta.dx > offset &&
+              moveEvent.delta.dy < offsetY &&
+              moveEvent.delta.dy > -offsetY) {
             isSwipeRight = true;
-          } else if (moveEvent.delta.dx < -offset) {
+          } else if (moveEvent.delta.dx < -offset &&
+              moveEvent.delta.dy < offsetY &&
+              moveEvent.delta.dy > -offsetY) {
             isSwipeLeft = true;
           }
         },
