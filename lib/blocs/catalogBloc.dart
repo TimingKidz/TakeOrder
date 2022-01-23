@@ -7,12 +7,15 @@ class CatalogBloc {
   CatalogBloc() {
     getCatalog();
   }
-  
+
   List<Item> all = [];
 
   final _catalogController = StreamController<List<Item>>.broadcast();
+  final _isShowKeyboardController = StreamController<bool>.broadcast();
 
   get catalog => _catalogController.stream;
+
+  get isShowKeyboard => _isShowKeyboardController.stream;
 
   getCatalog() async {
     all = await CatalogDbProvider.db.getAllCatalog();
@@ -43,12 +46,17 @@ class CatalogBloc {
       filter.sort(
           (a, b) => a.itemName.indexOf(s).compareTo(b.itemName.indexOf(s)));
       _catalogController.sink.add(filter);
-    }else{
+    } else {
       _catalogController.sink.add(all);
     }
   }
 
+  void isShowKeyboardToggle(bool isShow) {
+    _isShowKeyboardController.sink.add(isShow);
+  }
+
   dispose() {
     _catalogController.close();
+    _isShowKeyboardController.close();
   }
 }

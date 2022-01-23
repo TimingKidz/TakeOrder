@@ -18,21 +18,15 @@ class MemoPage extends StatefulWidget {
 class _MemoPageState extends State<MemoPage> {
   final memoBloc = MemoBloc();
   final cateBloc = CategoriesBloc();
-  // String dropdownValue = "All";
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    // init();
+    _scrollController.addListener(() {
+      memoBloc.isShowKeyboardToggle(false);
+    });
   }
-
-  // init() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String f = prefs.getString("cate") ?? "All";
-  //   print("page: $f");
-  //   dropdownValue = f;
-  //   setState(() {});
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +129,8 @@ class _MemoPageState extends State<MemoPage> {
                 if (snapshot.data!.isNotEmpty) {
                   return Expanded(
                     child: ListView.separated(
-                      physics: BouncingScrollPhysics(),
+                      controller: _scrollController,
+                        physics: BouncingScrollPhysics(),
                         padding: EdgeInsets.only(bottom: 92),
                         itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
@@ -146,17 +141,17 @@ class _MemoPageState extends State<MemoPage> {
                                 overflow: TextOverflow.ellipsis),
                             // subtitle: Text(snapshot.data![index].memoContent ?? "", maxLines: 4),
                             onTap: () {
-                              memoBloc.fMemo = snapshot.data![index];
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => MemoViewPage(memoBloc: memoBloc, cateBloc: cateBloc)),
+                            memoBloc.fMemo = snapshot.data![index];
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MemoViewPage(memoBloc: memoBloc, cateBloc: cateBloc)),
                             );
                           },
                         );
                       },
                       separatorBuilder: (_, index) {
                         return Divider(thickness: 1.5, height: 1.5);
-                        },
+                      },
                     ),
                   );
                 }else{

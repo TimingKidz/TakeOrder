@@ -28,6 +28,15 @@ class _CatalogPageState extends State<CatalogPage> {
   var listPrice = TextEditingController();
   var qty = TextEditingController();
   final SlidableController slidableController = SlidableController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      catalogBloc.isShowKeyboardToggle(false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +62,8 @@ class _CatalogPageState extends State<CatalogPage> {
                 if (snapshot.data!.isNotEmpty) {
                   return Expanded(
                     child: ListView.separated(
-                      physics: BouncingScrollPhysics(),
+                      controller: _scrollController,
+                        physics: BouncingScrollPhysics(),
                         padding: EdgeInsets.only(bottom: 92),
                         itemCount: snapshot.data?.length ?? 0,
                         separatorBuilder: (_, index) {
@@ -64,7 +74,7 @@ class _CatalogPageState extends State<CatalogPage> {
                             key: Key(snapshot.data![index].itemName),
                             controller: slidableController,
                             actionPane: SlidableDrawerActionPane(),
-                            actionExtentRatio: 0.25,
+                          actionExtentRatio: 0.25,
                           child: ListTile(
                             title: Text(snapshot.data![index].itemName),
                             trailing: Text(NumberFormat.currency(symbol: "", decimalDigits: 2).format(snapshot.data![index].itemPrice)),

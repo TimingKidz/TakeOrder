@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:invoice_manage/blocs/SummaryBloc.dart';
 
 class SearchBar extends StatelessWidget {
   final bloc;
@@ -11,14 +10,12 @@ class SearchBar extends StatelessWidget {
     TextEditingController searchText = TextEditingController();
     var textFieldFocusNode = FocusNode();
 
-    if (bloc is SummaryBloc) {
-      bloc.isShowKeyboard.listen((value) {
-        if (value)
-          textFieldFocusNode.requestFocus();
-        else
-          textFieldFocusNode.unfocus();
-      });
-    }
+    bloc.isShowKeyboard.listen((value) {
+      if (value)
+        textFieldFocusNode.requestFocus();
+      else
+        textFieldFocusNode.unfocus();
+    });
 
     return TextField(
       controller: searchText,

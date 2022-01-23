@@ -16,11 +16,14 @@ class MemoBloc {
   late Memo fMemo;
 
   final _memoController = StreamController<List<Memo>>.broadcast();
+  final _isShowKeyboardController = StreamController<bool>.broadcast();
 
   get memo => _memoController.stream;
 
+  get isShowKeyboard => _isShowKeyboardController.stream;
+
   getMemo() async {
-    if(prefs == null) prefs = await SharedPreferences.getInstance();
+    if (prefs == null) prefs = await SharedPreferences.getInstance();
     all = await MemoDbProvider.db.getAllMemo();
     String f = prefs?.getString("memoCate") ?? "All";
     dropdownValue = f;
@@ -88,7 +91,12 @@ class MemoBloc {
     return s;
   }
 
+  void isShowKeyboardToggle(bool isShow) {
+    _isShowKeyboardController.sink.add(isShow);
+  }
+
   dispose() {
     _memoController.close();
+    _isShowKeyboardController.close();
   }
 }
