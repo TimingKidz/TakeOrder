@@ -93,7 +93,7 @@ class _OrderPageState extends State<OrderPage> {
           children: [
             Expanded(
               child: Container(
-                margin: EdgeInsets.all(8.0),
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(width: 1.5, color: Colors.black45),
                 ),
@@ -154,7 +154,6 @@ class _OrderPageState extends State<OrderPage> {
                     );
                   }),
             ),
-            SizedBox(height: 8.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

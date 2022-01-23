@@ -28,7 +28,7 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: SearchBar(bloc: customerBloc),
           ),
           StreamBuilder<Iterable<Contact>>(
@@ -38,8 +38,12 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
                 if (snapshot.hasData) {
                   if (snapshot.data!.isNotEmpty) {
                     return Expanded(
-                      child: ListView.builder(
-                        itemCount: snapshot.data?.length,
+                      child: ListView.separated(
+                        physics: BouncingScrollPhysics(),
+                        itemCount: snapshot.data?.length ?? 0,
+                        separatorBuilder: (_, index) {
+                          return Divider(thickness: 1.5, height: 1.5);
+                        },
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
                             title: Text(
