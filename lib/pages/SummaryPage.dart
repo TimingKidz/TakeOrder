@@ -28,7 +28,7 @@ class _SummaryPageState extends State<SummaryPage> {
                   BorderRadius.vertical(bottom: Radius.circular(20.0)),
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
               child: SearchBar(bloc: summaryBloc),
             ),
           ),

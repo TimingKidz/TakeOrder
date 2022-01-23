@@ -31,6 +31,7 @@ class _SummaryListWidgetState extends State<SummaryListWidget> {
       builder: (BuildContext context, AsyncSnapshot<List<OrderItem>> snapshot) {
         if (snapshot.hasData) {
           return ListView.separated(
+            physics: BouncingScrollPhysics(),
             controller: _controller,
             itemCount: snapshot.data?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
@@ -56,7 +57,7 @@ class _SummaryListWidgetState extends State<SummaryListWidget> {
               ]);
             },
             separatorBuilder: (_, index) {
-              return Divider(thickness: 1.5);
+              return Divider(thickness: 1.5, height: 1.5);
             },
           );
         } else {
