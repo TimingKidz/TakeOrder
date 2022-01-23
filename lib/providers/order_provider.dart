@@ -1,3 +1,5 @@
+import 'package:invoice_manage/model/OrderItem.dart';
+import 'package:invoice_manage/model/SummaryData.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/model/orderList.dart';
 import 'package:invoice_manage/providers/db_provider.dart';
@@ -44,7 +46,7 @@ class OrderDbProvider {
     return list;
   }
 
-  Future<List<dynamic>> getSummary() async {
+  Future<SummaryData> getSummary() async {
     final db = await DbProvider.db.database;
     var itemTotal = await db.rawQuery("""
       SELECT SUM(${DbProvider.qty}) as qty, ${DbProvider.catalogTable}.${DbProvider.itemName}, SUM(${DbProvider.listPrice} * ${DbProvider.qty}) as SubTotal
@@ -66,7 +68,15 @@ class OrderDbProvider {
     payTypeTotal.forEach((Map<String, dynamic> each) {
       payTypeTotalMap.addAll({each["payType"]: each["TypeTotal"]});
     });
-    return [itemTotal, total.first["Total"], payTypeTotalMap];
+
+    List<OrderItem> allItems = itemTotal
+        .map((Map<String, Object?> object) => OrderItem.fromMap(object))
+        .toList();
+
+    return SummaryData(
+        orderItemList: allItems,
+        totals: double.parse(total.first["Total"].toString()),
+        payTypeTotalMap: payTypeTotalMap);
   }
 
   Future<void> addOrderHead() async {
@@ -118,7 +128,7 @@ class OrderDbProvider {
 
     await db.rawInsert(
         "INSERT Into ${DbProvider.orderListTable} (${DbProvider.orderID},${DbProvider.itemID},${DbProvider.listPrice},${DbProvider.qty})"
-        " VALUES (?,?,?,?)",
+            " VALUES (?,?,?,?)",
         [newItem.orderID, newItem.itemID, newItem.listPrice, newItem.qty]);
 
     return lPrice * qty;
@@ -176,10 +186,10 @@ class OrderDbProvider {
   Future<void> updateTime(int orderID) async {
     final db = await DbProvider.db.database;
     await db.update(
-      DbProvider.orderHeadTable,
-      {DbProvider.date: DateTime.now().toIso8601String()},
-      where: "${DbProvider.orderID} = ?",
-      whereArgs: [orderID]
+        DbProvider.orderHeadTable,
+        {DbProvider.date: DateTime.now().toIso8601String()},
+        where: "${DbProvider.orderID} = ?",
+        whereArgs: [orderID]
     );
   }
 }
