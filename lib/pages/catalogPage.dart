@@ -35,25 +35,28 @@ class _CatalogPageState extends State<CatalogPage> {
       appBar: AppBar(
         title: Text("Select Item(s) from Catalog"),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => addItem(),
-        child: Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => addItem(),
+      //   child: Icon(Icons.add),
+      // ),
+      floatingActionButton: fabAddToOrder(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Column(
         children: [
-          SizedBox(height: 8.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          Container(
+            padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+            color: Theme.of(context).canvasColor,
             child: SearchBar(bloc: catalogBloc),
           ),
           StreamBuilder<List<Item>>(
-            stream: catalogBloc.catalog,
-            builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isNotEmpty) {
-                  return Expanded(
-                    child: ListView.separated(
-                      physics: BouncingScrollPhysics(),
+              stream: catalogBloc.catalog,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isNotEmpty) {
+                    return Expanded(
+                      child: ListView.separated(
+                        physics: BouncingScrollPhysics(),
                         padding: EdgeInsets.only(bottom: 92),
                         itemCount: snapshot.data?.length ?? 0,
                         separatorBuilder: (_, index) {
@@ -65,49 +68,109 @@ class _CatalogPageState extends State<CatalogPage> {
                             controller: slidableController,
                             actionPane: SlidableDrawerActionPane(),
                             actionExtentRatio: 0.25,
-                          child: ListTile(
-                            title: Text(snapshot.data![index].itemName),
-                            trailing: Text(NumberFormat.currency(symbol: "", decimalDigits: 2).format(snapshot.data![index].itemPrice)),
-                            onTap: () => addItemToOrder(snapshot.data![index]),
-                          ),
-                          secondaryActions: <Widget>[
-                            IconSlideAction(
-                              caption: 'Edit',
-                              color: Colors.black45,
-                              icon: Icons.edit,
-                              onTap: () => editItem(snapshot.data![index]),
+                            child: ListTile(
+                              title: Text(snapshot.data![index].itemName),
+                              trailing: Text(NumberFormat.currency(
+                                      symbol: "", decimalDigits: 2)
+                                  .format(snapshot.data![index].itemPrice)),
+                              onTap: () =>
+                                  addItemToOrder(snapshot.data![index]),
+                              onLongPress: () {
+                                catalogBloc.setIsSelected(
+                                    snapshot.data![index].itemID ?? 0);
+                              },
+                              selected:
+                                  snapshot.data![index].isSelected ?? false,
+                              selectedColor: Colors.black,
+                              selectedTileColor: Colors.black12,
                             ),
-                            IconSlideAction(
-                              caption: 'Delete',
-                              color: Colors.red,
-                              icon: Icons.delete,
-                              onTap: () => deleteItem(snapshot.data![index]),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  );
-                }else{
-                  return Expanded(child: Center(child: Text("No item in catalog, please add your first item.")));
+                            secondaryActions: <Widget>[
+                              IconSlideAction(
+                                caption: 'Edit',
+                                color: Colors.black45,
+                                icon: Icons.edit,
+                                onTap: () => editItem(snapshot.data![index]),
+                              ),
+                              IconSlideAction(
+                                caption: 'Delete',
+                                color: Colors.red,
+                                icon: Icons.delete,
+                                onTap: () => deleteItem(snapshot.data![index]),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  } else {
+                    return Expanded(
+                        child: Center(
+                            child: Text(
+                                "No item in catalog, please add your first item.")));
+                  }
+                } else {
+                  return Expanded(
+                      child: Center(child: CircularProgressIndicator()));
                 }
-              }else{
-                return Expanded(child: Center(child: CircularProgressIndicator()));
-              }
-            }
-          ),
+              }),
         ],
+      ),
+    );
+  }
+
+  Widget fabAddToOrder() {
+    return IntrinsicHeight(
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+          color: Colors.orange,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextButton.icon(
+              label: Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+                child: Text("Add to order"),
+              ),
+              icon: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Icon(Icons.add),
+              ),
+              onPressed: () {},
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
+                  overlayColor: MaterialStateProperty.all(Colors.black12)),
+            ),
+            VerticalDivider(thickness: 1.5, width: 1.5, color: Colors.white24),
+            TextButton(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("QTY: 1"),
+              ),
+              onPressed: () {},
+              style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
+                  overlayColor: MaterialStateProperty.all(Colors.black12)),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Future<void> addItem() async {
     String t = await showDialog(
-        context: context,
-        builder: (BuildContext context) => AddItemDialog(itemName: itemName, listPrice: itemPrice)
-    ) ?? "Cancel";
-    if(t == "Add") {
-      double itemP = itemPrice.text.isNotEmpty ? double.parse(itemPrice.text) : 0;
+            context: context,
+            builder: (BuildContext context) =>
+                AddItemDialog(itemName: itemName, listPrice: itemPrice)) ??
+        "Cancel";
+    if (t == "Add") {
+      double itemP =
+          itemPrice.text.isNotEmpty ? double.parse(itemPrice.text) : 0;
       Item item = Item(itemName: itemName.text, itemPrice: itemP);
       catalogBloc.add(item);
     }
