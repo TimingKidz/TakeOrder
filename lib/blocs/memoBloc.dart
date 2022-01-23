@@ -46,7 +46,7 @@ class MemoBloc {
     List<Memo> filList = prefs?.getString("memoCate") == "All" ? all : focus;
     if (s.isNotEmpty) {
       List<Memo> filter = filList.where((memo) {
-        var title = memoTitle(memo.memoContent ?? "");
+        var title = memoTitle(memo.memoContent ?? "").toLowerCase();
         return title.contains(s);
       }).toList();
       filter.sort((a, b) => memoTitle(a.memoContent ?? "")
