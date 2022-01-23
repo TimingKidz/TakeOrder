@@ -30,6 +30,9 @@ class CustomerBloc {
         var displayName = cus.displayName?.toLowerCase() ?? "";
         return displayName.contains(s);
       }).toList();
+      filter.sort((a, b) =>
+          a.displayName?.indexOf(s).compareTo(b.displayName?.indexOf(s) ?? 0) ??
+          0);
       _customerController.sink.add(filter);
     } else{
       _customerController.sink.add(contacts);

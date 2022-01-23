@@ -46,9 +46,12 @@ class MemoBloc {
     List<Memo> filList = prefs?.getString("memoCate") == "All" ? all : focus;
     if (s.isNotEmpty) {
       List<Memo> filter = filList.where((memo) {
-        var title = memo.memoTitle?.toLowerCase() ?? "";
+        var title = memoTitle(memo.memoContent ?? "");
         return title.contains(s);
       }).toList();
+      filter.sort((a, b) => memoTitle(a.memoContent ?? "")
+          .indexOf(s)
+          .compareTo(memoTitle(b.memoContent ?? "").indexOf(s)));
       _memoController.sink.add(filter);
     }else{
       _memoController.sink.add(filList);
@@ -60,15 +63,29 @@ class MemoBloc {
       focus = all;
       _memoController.sink.add(all);
     }else if(dropdownValue == "Unfiled"){
-      List<Memo> filter = all.where((memo) => memo.memoCateName == null).toList();
+      List<Memo> filter =
+          all.where((memo) => memo.memoCateName == null).toList();
       focus = filter;
       _memoController.sink.add(filter);
-    }else{
-      List<Memo> filter = all.where((memo) => memo.memoCateName == dropdownValue).toList();
+    } else {
+      List<Memo> filter =
+          all.where((memo) => memo.memoCateName == dropdownValue).toList();
       focus = filter;
       _memoController.sink.add(filter);
     }
     await prefs?.setString("memoCate", dropdownValue);
+  }
+
+  String memoTitle(String s) {
+    int idx = s.indexOf("\n");
+    print(idx);
+    if (idx < 0) {
+      // if(s.length > 10) s = s.substring(0, 20).trim();
+    } else {
+      s = s.substring(0, idx).trim();
+    }
+    print(s);
+    return s;
   }
 
   dispose() {

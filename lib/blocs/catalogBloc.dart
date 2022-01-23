@@ -40,6 +40,8 @@ class CatalogBloc {
         var title = item.itemName.toLowerCase();
         return title.contains(s);
       }).toList();
+      filter.sort(
+          (a, b) => a.itemName.indexOf(s).compareTo(b.itemName.indexOf(s)));
       _catalogController.sink.add(filter);
     }else{
       _catalogController.sink.add(all);
