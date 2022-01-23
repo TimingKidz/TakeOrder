@@ -7,7 +7,6 @@ import 'package:invoice_manage/pages/addMemoPage.dart';
 import 'package:invoice_manage/pages/categoriesPage.dart';
 import 'package:invoice_manage/pages/memoViewPage.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MemoPage extends StatefulWidget {
   const MemoPage({Key? key}) : super(key: key);
@@ -125,7 +124,7 @@ class _MemoPageState extends State<MemoPage> {
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0)),
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
               child: SearchBar(bloc: memoBloc),
             ),
           ),
@@ -136,24 +135,28 @@ class _MemoPageState extends State<MemoPage> {
                 if (snapshot.data!.isNotEmpty) {
                   return Expanded(
                     child: ListView.separated(
-                      padding: EdgeInsets.only(bottom: 92),
-                      itemCount: snapshot.data?.length ?? 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          title: Text(memoTitle(snapshot.data![index].memoContent ?? ""), overflow: TextOverflow.ellipsis),
-                          // subtitle: Text(snapshot.data![index].memoContent ?? "", maxLines: 4),
-                          onTap: () {
-                            memoBloc.fMemo = snapshot.data![index];
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => MemoViewPage(memoBloc: memoBloc, cateBloc: cateBloc)),
+                      physics: BouncingScrollPhysics(),
+                        padding: EdgeInsets.only(bottom: 92),
+                        itemCount: snapshot.data?.length ?? 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title: Text(
+                                memoTitle(
+                                    snapshot.data![index].memoContent ?? ""),
+                                overflow: TextOverflow.ellipsis),
+                            // subtitle: Text(snapshot.data![index].memoContent ?? "", maxLines: 4),
+                            onTap: () {
+                              memoBloc.fMemo = snapshot.data![index];
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => MemoViewPage(memoBloc: memoBloc, cateBloc: cateBloc)),
                             );
                           },
                         );
                       },
                       separatorBuilder: (_, index) {
-                        return Divider(thickness: 1.5);
-                      },
+                        return Divider(thickness: 1.5, height: 1.5);
+                        },
                     ),
                   );
                 }else{

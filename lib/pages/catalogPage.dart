@@ -1,7 +1,6 @@
-import 'package:intl/intl.dart';
-
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:invoice_manage/blocs/catalogBloc.dart';
 import 'package:invoice_manage/blocs/orderBloc.dart';
 import 'package:invoice_manage/model/item.dart';
@@ -10,8 +9,8 @@ import 'package:invoice_manage/utils/Formatters.dart';
 import 'package:invoice_manage/widget/addItem_dialog.dart';
 import 'package:invoice_manage/widget/addtoOrder_dialog.dart';
 import 'package:invoice_manage/widget/catalogedit_dialog.dart';
-import 'package:invoice_manage/widget/yesno_dialog.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
+import 'package:invoice_manage/widget/yesno_dialog.dart';
 
 class CatalogPage extends StatefulWidget {
   final OrderBloc orderBloc;
@@ -44,10 +43,9 @@ class _CatalogPageState extends State<CatalogPage> {
         children: [
           SizedBox(height: 8.0),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SearchBar(bloc: catalogBloc),
           ),
-          SizedBox(height: 8.0),
           StreamBuilder<List<Item>>(
             stream: catalogBloc.catalog,
             builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
@@ -55,17 +53,18 @@ class _CatalogPageState extends State<CatalogPage> {
                 if (snapshot.data!.isNotEmpty) {
                   return Expanded(
                     child: ListView.separated(
-                      padding: EdgeInsets.only(bottom: 92),
-                      itemCount: snapshot.data?.length ?? 0,
-                      separatorBuilder: (_, index) {
-                        return Divider(thickness: 1.5);
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return Slidable(
-                          key: Key(snapshot.data![index].itemName),
-                          controller: slidableController,
-                          actionPane: SlidableDrawerActionPane(),
-                          actionExtentRatio: 0.25,
+                      physics: BouncingScrollPhysics(),
+                        padding: EdgeInsets.only(bottom: 92),
+                        itemCount: snapshot.data?.length ?? 0,
+                        separatorBuilder: (_, index) {
+                          return Divider(thickness: 1.5, height: 1.5);
+                        },
+                        itemBuilder: (BuildContext context, int index) {
+                          return Slidable(
+                            key: Key(snapshot.data![index].itemName),
+                            controller: slidableController,
+                            actionPane: SlidableDrawerActionPane(),
+                            actionExtentRatio: 0.25,
                           child: ListTile(
                             title: Text(snapshot.data![index].itemName),
                             trailing: Text(NumberFormat.currency(symbol: "", decimalDigits: 2).format(snapshot.data![index].itemPrice)),
