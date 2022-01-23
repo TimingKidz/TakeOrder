@@ -25,6 +25,7 @@ class SearchBar extends StatelessWidget {
       focusNode: textFieldFocusNode,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
+          contentPadding: EdgeInsets.zero,
           prefixIcon: Icon(Icons.search),
           hintText: "Search...",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),

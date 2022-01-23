@@ -28,7 +28,7 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
             child: SearchBar(bloc: customerBloc),
           ),
           StreamBuilder<Iterable<Contact>>(

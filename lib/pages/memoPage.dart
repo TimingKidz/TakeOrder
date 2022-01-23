@@ -124,7 +124,7 @@ class _MemoPageState extends State<MemoPage> {
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0)),
             ),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+              padding: EdgeInsets.all(8.0),
               child: SearchBar(bloc: memoBloc),
             ),
           ),
