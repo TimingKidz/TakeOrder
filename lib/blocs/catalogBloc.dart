@@ -41,9 +41,23 @@ class CatalogBloc {
         return title.contains(s);
       }).toList();
       _catalogController.sink.add(filter);
-    }else{
+    } else {
       _catalogController.sink.add(all);
     }
+  }
+
+  void setIsSelected(int selectItemID) {
+    all = all.map((Item item) {
+      if (item.itemID == selectItemID)
+        return Item(
+            itemID: item.itemID,
+            itemName: item.itemName,
+            itemPrice: item.itemPrice,
+            isSelected: !(item.isSelected ?? true));
+      else
+        return item;
+    }).toList();
+    _catalogController.sink.add(all);
   }
 
   dispose() {
