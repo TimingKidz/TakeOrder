@@ -25,6 +25,7 @@ class MemoBloc {
   getMemo() async {
     if (prefs == null) prefs = await SharedPreferences.getInstance();
     all = await MemoDbProvider.db.getAllMemo();
+    all.sort(_sortAlphaNum);
     String f = prefs?.getString("memoCate") ?? "All";
     dropdownValue = f;
     filter();
@@ -81,18 +82,34 @@ class MemoBloc {
 
   String memoTitle(String s) {
     int idx = s.indexOf("\n");
-    print(idx);
     if (idx < 0) {
       // if(s.length > 10) s = s.substring(0, 20).trim();
     } else {
       s = s.substring(0, idx).trim();
     }
-    print(s);
     return s;
   }
 
   void isShowKeyboardToggle(bool isShow) {
     _isShowKeyboardController.sink.add(isShow);
+  }
+
+  int _sortAlphaNum(Memo memoA, Memo memoB) {
+    var reAlpha = RegExp(r'[0-9]');
+    var reNum = RegExp(r'[^0-9]');
+
+    var a = memoTitle(memoA.memoContent ?? "");
+    var b = memoTitle(memoB.memoContent ?? "");
+
+    var aAlpha = a.replaceAll(reAlpha, "");
+    var bAlpha = b.replaceAll(reAlpha, "");
+
+    if (aAlpha == bAlpha) {
+      var aNum = int.parse(a.replaceAll(reNum, ""));
+      var bNum = int.parse(b.replaceAll(reNum, ""));
+      return aNum.compareTo(bNum);
+    }
+    return aAlpha.compareTo(bAlpha);
   }
 
   dispose() {

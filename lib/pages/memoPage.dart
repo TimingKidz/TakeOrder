@@ -169,13 +169,11 @@ class _MemoPageState extends State<MemoPage> {
 
   String memoTitle(String s) {
     int idx = s.indexOf("\n");
-    print(idx);
     if(idx < 0){
       // if(s.length > 10) s = s.substring(0, 20).trim();
     }else{
       s = s.substring(0,idx).trim();
     }
-    print(s);
     return s;
   }
 }

@@ -74,8 +74,6 @@ class _OrderPageState extends State<OrderPage> {
         onPointerMove: (moveEvent) {
           int offset = 10;
           int offsetY = 2;
-          print(moveEvent.delta.dx);
-          print(moveEvent.delta.dy);
           if (moveEvent.delta.dx > offset &&
               moveEvent.delta.dy < offsetY &&
               moveEvent.delta.dy > -offsetY) {
