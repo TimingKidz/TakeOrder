@@ -1,7 +1,7 @@
 import 'db_provider.dart';
 
 class DatabaseMigrationScripts {
-  static final migrationScripts = [_firstMigration];
+  static final migrationScripts = [_firstMigration, _secondMigration];
 
   static final _firstMigration = [
     """ALTER TABLE ${DbProvider.orderHeadTable} RENAME TO OrderHeadOld""",
@@ -34,5 +34,21 @@ class DatabaseMigrationScripts {
     """DROP TABLE OrderHeadOld""",
     """DROP TABLE OrderListOld""",
     """DROP TABLE ${DbProvider.customerTable}"""
+  ];
+
+  static final _secondMigration = [
+    """ALTER TABLE ${DbProvider.memoTable} RENAME TO MemoOld""",
+    """CREATE TABLE ${DbProvider.memoTable} (
+            ${DbProvider.memoID}	INTEGER NOT NULL,
+            ${DbProvider.isMemoEdited}	INTEGER,
+            ${DbProvider.memoContent}	TEXT,
+            ${DbProvider.memoCateID}	INTEGER,
+            FOREIGN KEY(${DbProvider.memoCateID}) REFERENCES ${DbProvider.categoriesTable}(${DbProvider.cateID}) ON DELETE SET NULL,
+            PRIMARY KEY(${DbProvider.memoID})
+          );
+          """,
+    """INSERT INTO ${DbProvider.memoTable} (${DbProvider.memoID}, ${DbProvider.isMemoEdited}, ${DbProvider.memoContent}, ${DbProvider.memoCateID})
+    SELECT ${DbProvider.memoID}, 0, ${DbProvider.memoContent}, ${DbProvider.memoCateID}
+    FROM MemoOld"""
   ];
 }
