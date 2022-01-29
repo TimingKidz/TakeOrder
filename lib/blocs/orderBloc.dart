@@ -160,6 +160,7 @@ class OrderBloc {
             "\nTOTAL: ${element.total}";
         String content = title + order;
         Memo m = Memo(
+          isMemoEdited: false,
           memoContent: content,
         );
         await MemoDbProvider.db.newMemo(m); // Each order memo
@@ -181,6 +182,7 @@ class OrderBloc {
 
     String content = title + order + "TOTAL: ${info.totals}\n" + payTypeTotal;
     Memo m = Memo(
+      isMemoEdited: false,
       memoContent: content,
     );
     await MemoDbProvider.db.newMemo(m); // Summary memo

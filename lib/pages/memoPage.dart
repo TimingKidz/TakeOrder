@@ -36,11 +36,13 @@ class _MemoPageState extends State<MemoPage> {
         actions: [
           StreamBuilder<List<Categories>>(
               stream: cateBloc.categories,
-              builder: (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Categories>> snapshot) {
                 return StreamBuilder<List<Memo>>(
                     stream: memoBloc.memo,
                     builder: (context, _) {
-                      List<DropdownMenuItem<String>> allCate = cateBloc.genDropdownMenu();
+                      List<DropdownMenuItem<String>> allCate =
+                          cateBloc.genDropdownMenu();
                       return Padding(
                         padding: const EdgeInsets.only(right: 16.0),
                         child: Center(
@@ -68,12 +70,15 @@ class _MemoPageState extends State<MemoPage> {
                                 // color: Colors.deepPurpleAccent,
                               ),
                               onChanged: (String? newValue) {
-                                if(newValue == "Edit Categories..."){
+                                if (newValue == "Edit Categories...") {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => CategoriesPage(cateBloc: cateBloc, memoBloc: memoBloc)),
+                                    MaterialPageRoute(
+                                        builder: (context) => CategoriesPage(
+                                            cateBloc: cateBloc,
+                                            memoBloc: memoBloc)),
                                   );
-                                }else{
+                                } else {
                                   memoBloc.dropdownValue = newValue!;
                                   memoBloc.filter();
                                 }
@@ -83,7 +88,7 @@ class _MemoPageState extends State<MemoPage> {
                                   value: "All",
                                   child: Text("All"),
                                 ),
-                                for(DropdownMenuItem<String> c in allCate) c,
+                                for (DropdownMenuItem<String> c in allCate) c,
                                 DropdownMenuItem<String>(
                                   value: "Unfiled",
                                   child: Text("Unfiled"),
@@ -97,17 +102,17 @@ class _MemoPageState extends State<MemoPage> {
                           ),
                         ),
                       );
-                    }
-                );
-              }
-          ),
+                    });
+              }),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orange,
         onPressed: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AddMemo(memoBloc: memoBloc, cateBloc: cateBloc)),
+          MaterialPageRoute(
+              builder: (context) =>
+                  AddMemo(memoBloc: memoBloc, cateBloc: cateBloc)),
         ),
         child: Icon(Icons.add),
       ),
@@ -115,7 +120,8 @@ class _MemoPageState extends State<MemoPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0)),
+              borderRadius:
+                  BorderRadius.vertical(bottom: Radius.circular(20.0)),
             ),
             child: Padding(
               padding: EdgeInsets.all(8.0),
@@ -123,13 +129,14 @@ class _MemoPageState extends State<MemoPage> {
             ),
           ),
           StreamBuilder<List<Memo>>(
-            stream: memoBloc.memo,
-            builder: (BuildContext context, AsyncSnapshot<List<Memo>> snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isNotEmpty) {
-                  return Expanded(
-                    child: ListView.separated(
-                      controller: _scrollController,
+              stream: memoBloc.memo,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Memo>> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isNotEmpty) {
+                    return Expanded(
+                      child: ListView.separated(
+                        controller: _scrollController,
                         physics: BouncingScrollPhysics(),
                         padding: EdgeInsets.only(bottom: 92),
                         itemCount: snapshot.data?.length ?? 0,
@@ -139,29 +146,34 @@ class _MemoPageState extends State<MemoPage> {
                                 memoTitle(
                                     snapshot.data![index].memoContent ?? ""),
                                 overflow: TextOverflow.ellipsis),
-                            // subtitle: Text(snapshot.data![index].memoContent ?? "", maxLines: 4),
                             onTap: () {
-                            memoBloc.fMemo = snapshot.data![index];
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => MemoViewPage(memoBloc: memoBloc, cateBloc: cateBloc)),
-                            );
-                          },
-                        );
-                      },
-                      separatorBuilder: (_, index) {
-                        return Divider(thickness: 1.5, height: 1.5);
-                      },
-                    ),
-                  );
-                }else{
-                  return Expanded(child: Center(child: Text("No memo.")));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MemoViewPage(
+                                        cateBloc: cateBloc,
+                                        memo: snapshot.data![index])),
+                              ).then((value) {
+                                if (value) {
+                                  memoBloc.getMemo();
+                                }
+                              });
+                            },
+                          );
+                        },
+                        separatorBuilder: (_, index) {
+                          return Divider(thickness: 1.5, height: 1.5);
+                        },
+                      ),
+                    );
+                  } else {
+                    return Expanded(child: Center(child: Text("No memo.")));
+                  }
+                } else {
+                  return Expanded(
+                      child: Center(child: CircularProgressIndicator()));
                 }
-              }else{
-                return Expanded(child: Center(child: CircularProgressIndicator()));
-              }
-            }
-          ),
+              }),
         ],
       ),
     );
@@ -169,13 +181,11 @@ class _MemoPageState extends State<MemoPage> {
 
   String memoTitle(String s) {
     int idx = s.indexOf("\n");
-    print(idx);
-    if(idx < 0){
+    if (idx < 0) {
       // if(s.length > 10) s = s.substring(0, 20).trim();
-    }else{
-      s = s.substring(0,idx).trim();
+    } else {
+      s = s.substring(0, idx).trim();
     }
-    print(s);
     return s;
   }
 }
