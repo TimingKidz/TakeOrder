@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:invoice_manage/model/memo.dart';
 import 'package:invoice_manage/providers/memo_provider.dart';
+import 'package:invoice_manage/utils/SortAlphaNum.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MemoBloc {
@@ -25,7 +26,8 @@ class MemoBloc {
   getMemo() async {
     if (prefs == null) prefs = await SharedPreferences.getInstance();
     all = await MemoDbProvider.db.getAllMemo();
-    all.sort(_sortAlphaNum);
+    all.sort((a, b) => sortAlphaNum(
+        memoTitle(a.memoContent ?? ""), memoTitle(b.memoContent ?? "")));
     String f = prefs?.getString("memoCate") ?? "All";
     dropdownValue = f;
     filter();
@@ -92,24 +94,6 @@ class MemoBloc {
 
   void isShowKeyboardToggle(bool isShow) {
     _isShowKeyboardController.sink.add(isShow);
-  }
-
-  int _sortAlphaNum(Memo memoA, Memo memoB) {
-    var reAlpha = RegExp(r'[0-9]');
-    var reNum = RegExp(r'[^0-9]');
-
-    var a = memoTitle(memoA.memoContent ?? "");
-    var b = memoTitle(memoB.memoContent ?? "");
-
-    var aAlpha = a.replaceAll(reAlpha, "");
-    var bAlpha = b.replaceAll(reAlpha, "");
-
-    if (aAlpha == bAlpha) {
-      var aNum = int.parse(a.replaceAll(reNum, ""));
-      var bNum = int.parse(b.replaceAll(reNum, ""));
-      return aNum.compareTo(bNum);
-    }
-    return aAlpha.compareTo(bAlpha);
   }
 
   dispose() {
