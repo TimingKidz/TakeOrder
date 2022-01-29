@@ -13,8 +13,9 @@ class MemoBloc {
   SharedPreferences? prefs;
   List<Memo> all = [];
   List<Memo> focus = [];
+  List<Memo> editedList = [];
+  List<Memo> exportList = [];
   String dropdownValue = "All";
-  late Memo fMemo;
 
   final _memoController = StreamController<List<Memo>>.broadcast();
   final _isShowKeyboardController = StreamController<bool>.broadcast();
@@ -26,8 +27,21 @@ class MemoBloc {
   getMemo() async {
     if (prefs == null) prefs = await SharedPreferences.getInstance();
     all = await MemoDbProvider.db.getAllMemo();
-    all.sort((a, b) => sortAlphaNum(
+
+    // Find edited item and add to editedList
+    editedList = all.where((Memo memo) => memo.isMemoEdited).toList();
+    // Sort edited item list
+    editedList.sort((a, b) => sortAlphaNum(
         memoTitle(a.memoContent ?? ""), memoTitle(b.memoContent ?? "")));
+
+    // Find export item and add to exportList
+    exportList = all.where((Memo memo) => !memo.isMemoEdited).toList();
+
+    // Combined two list
+    all.clear();
+    all.addAll(editedList);
+    all.addAll(exportList);
+
     String f = prefs?.getString("memoCate") ?? "All";
     dropdownValue = f;
     filter();
@@ -35,16 +49,6 @@ class MemoBloc {
 
   Future<void> add(Memo memo) async {
     await MemoDbProvider.db.newMemo(memo);
-    await getMemo();
-  }
-
-  Future<void> update(Memo old, Memo up) async {
-    await MemoDbProvider.db.updateMemo(old, up);
-    await getMemo();
-  }
-
-  Future<void> delete(Memo memo) async {
-    await MemoDbProvider.db.deleteMemo(memo);
     await getMemo();
   }
 
