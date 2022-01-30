@@ -48,7 +48,18 @@ class _CatalogPageState extends State<CatalogPage> {
       //   onPressed: () => addItem(),
       //   child: Icon(Icons.add),
       // ),
-      floatingActionButton: fabAddToOrder(),
+      floatingActionButton: StreamBuilder<bool>(
+          stream: catalogBloc.isHaveItemSelected,
+          builder: (context, snapshot) {
+            if (snapshot.data ?? false) {
+              return fabAddToOrder();
+            } else {
+              return FloatingActionButton(
+                onPressed: () => addItem(),
+                child: Icon(Icons.add),
+              );
+            }
+          }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Column(
         children: [
@@ -83,11 +94,11 @@ class _CatalogPageState extends State<CatalogPage> {
                               trailing: Text(NumberFormat.currency(
                                       symbol: "", decimalDigits: 2)
                                   .format(snapshot.data![index].itemPrice)),
-                              onTap: () =>
-                                  addItemToOrder(snapshot.data![index]),
-                              onLongPress: () {
-                                catalogBloc.setIsSelected(
-                                    snapshot.data![index].itemID ?? 0);
+                              // onTap: () =>
+                              //     addItemToOrder(snapshot.data![index]),
+                              onTap: () {
+                                catalogBloc
+                                    .setIsSelected(snapshot.data![index]);
                               },
                               selected:
                                   snapshot.data![index].isSelected ?? false,
@@ -192,11 +203,13 @@ class _CatalogPageState extends State<CatalogPage> {
     itemName.text = item.itemName;
     itemPrice.text = textFieldPriceFormatter(item.itemPrice);
     String t = await showDialog(
-        context: context,
-        builder: (BuildContext context) => CatalogEditDialog(itemName: itemName, itemPrice: itemPrice)
-    ) ?? "Cancel";
-    if(t == "Update") {
-      double itemP = itemPrice.text.isNotEmpty ? double.parse(itemPrice.text) : 0;
+            context: context,
+            builder: (BuildContext context) =>
+                CatalogEditDialog(itemName: itemName, itemPrice: itemPrice)) ??
+        "Cancel";
+    if (t == "Update") {
+      double itemP =
+          itemPrice.text.isNotEmpty ? double.parse(itemPrice.text) : 0;
       Item newItem = Item(itemName: itemName.text, itemPrice: itemP);
       catalogBloc.update(item, newItem);
     }
@@ -206,10 +219,11 @@ class _CatalogPageState extends State<CatalogPage> {
 
   Future<void> deleteItem(Item item) async {
     String t = await showDialog(
-        context: context,
-        builder: (BuildContext context) => YesNoDialog(title: 'Delete Item ${item.itemName}')
-    ) ?? "Cancel";
-    if(t == "Yes") {
+            context: context,
+            builder: (BuildContext context) =>
+                YesNoDialog(title: 'Delete Item ${item.itemName}')) ??
+        "Cancel";
+    if (t == "Yes") {
       catalogBloc.delete(item);
     }
   }
@@ -218,12 +232,19 @@ class _CatalogPageState extends State<CatalogPage> {
     listPrice.text = textFieldPriceFormatter(i.itemPrice);
     qty.text = "1";
     String t = await showDialog(
-        context: context,
-        builder: (BuildContext context) => AddToOrderDialog(itemName: i.itemName, listPrice: listPrice, qty: qty)
-    ) ?? "Cancel";
-    int o = widget.orderBloc.all.elementAt(widget.orderBloc.pageNum-1).orderID;
-    if(t == "Add") {
-      OrderList item = OrderList(orderID: o, itemID: i.itemID ?? -1, itemName: i.itemName, listPrice: double.parse(listPrice.text), qty: int.parse(qty.text));
+            context: context,
+            builder: (BuildContext context) => AddToOrderDialog(
+                itemName: i.itemName, listPrice: listPrice, qty: qty)) ??
+        "Cancel";
+    int o =
+        widget.orderBloc.all.elementAt(widget.orderBloc.pageNum - 1).orderID;
+    if (t == "Add") {
+      OrderList item = OrderList(
+          orderID: o,
+          itemID: i.itemID ?? -1,
+          itemName: i.itemName,
+          listPrice: double.parse(listPrice.text),
+          qty: int.parse(qty.text));
       widget.orderBloc.add(item);
     }
     listPrice.clear();

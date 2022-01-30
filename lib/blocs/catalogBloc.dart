@@ -5,18 +5,25 @@ import 'package:invoice_manage/providers/catalog_provider.dart';
 
 class CatalogBloc {
   CatalogBloc() {
+    _isHaveItemSelectedController.sink.add(false);
     getCatalog();
   }
-  
+
   List<Item> all = [];
+  List<Item> selectedItem = [];
   String _searchFilterText = "";
 
   final _catalogController = StreamController<List<Item>>.broadcast();
-  final _isShowKeyboardController = StreamController<bool>.broadcast();
 
   get catalog => _catalogController.stream;
 
+  final _isShowKeyboardController = StreamController<bool>.broadcast();
+
   get isShowKeyboard => _isShowKeyboardController.stream;
+
+  final _isHaveItemSelectedController = StreamController<bool>.broadcast();
+
+  get isHaveItemSelected => _isHaveItemSelectedController.stream;
 
   getCatalog() async {
     all = await CatalogDbProvider.db.getAllCatalog();
@@ -57,17 +64,24 @@ class CatalogBloc {
     }
   }
 
-  void setIsSelected(int selectItemID) {
+  void setIsSelected(Item selectItem) {
     all = all.map((Item item) {
-      if (item.itemID == selectItemID)
+      if (item.itemID == selectItem.itemID) {
+        if (item.isSelected ?? true) {
+          selectedItem.remove(selectItem);
+        } else {
+          selectedItem.add(selectItem);
+        }
         return Item(
             itemID: item.itemID,
             itemName: item.itemName,
             itemPrice: item.itemPrice,
             isSelected: !(item.isSelected ?? true));
-      else
+      } else {
         return item;
+      }
     }).toList();
+    isHaveItemSelectedToggle();
     _catalogController.sink.add(all);
   }
 
@@ -75,8 +89,13 @@ class CatalogBloc {
     _isShowKeyboardController.sink.add(isShow);
   }
 
+  void isHaveItemSelectedToggle() {
+    _isHaveItemSelectedController.sink.add(selectedItem.isNotEmpty);
+  }
+
   dispose() {
     _catalogController.close();
     _isShowKeyboardController.close();
+    _isHaveItemSelectedController.close();
   }
 }
