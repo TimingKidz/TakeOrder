@@ -104,11 +104,12 @@ class MemoBloc {
   }
 
   String memoTitle(String s) {
-    int idx = s.indexOf("\n");
-    if (idx < 0) {
-      // if(s.length > 10) s = s.substring(0, 20).trim();
-    } else {
-      s = s.substring(0, idx).trim();
+    List<String> titleList = s.split("\n");
+    for (var i = 0; i < titleList.length; i++) {
+      if (titleList[i].isNotEmpty) {
+        s = titleList[i];
+        break;
+      }
     }
     return s;
   }
