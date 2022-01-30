@@ -12,6 +12,15 @@ class SelectCustomerPage extends StatefulWidget {
 
 class _SelectCustomerPageState extends State<SelectCustomerPage> {
   final customerBloc = CustomerBloc();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      customerBloc.isShowKeyboardToggle(false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
             child: SearchBar(bloc: customerBloc),
           ),
           StreamBuilder<Iterable<Contact>>(
@@ -39,6 +48,7 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
                   if (snapshot.data!.isNotEmpty) {
                     return Expanded(
                       child: ListView.separated(
+                        controller: _scrollController,
                         physics: BouncingScrollPhysics(),
                         itemCount: snapshot.data?.length ?? 0,
                         separatorBuilder: (_, index) {

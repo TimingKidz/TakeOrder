@@ -9,14 +9,22 @@ class CatalogBloc {
   }
   
   List<Item> all = [];
+  String _searchFilterText = "";
 
   final _catalogController = StreamController<List<Item>>.broadcast();
+  final _isShowKeyboardController = StreamController<bool>.broadcast();
 
   get catalog => _catalogController.stream;
 
+  get isShowKeyboard => _isShowKeyboardController.stream;
+
   getCatalog() async {
     all = await CatalogDbProvider.db.getAllCatalog();
-    _catalogController.sink.add(all);
+    if (_searchFilterText.isNotEmpty) {
+      searchFilter(_searchFilterText);
+    } else {
+      _catalogController.sink.add(all);
+    }
   }
 
   Future<void> add(Item item) async {
@@ -35,11 +43,14 @@ class CatalogBloc {
   }
 
   Future<void> searchFilter(String s) async {
+    _searchFilterText = s;
     if (s.isNotEmpty) {
       List<Item> filter = all.where((item) {
         var title = item.itemName.toLowerCase();
         return title.contains(s);
       }).toList();
+      filter.sort(
+          (a, b) => a.itemName.indexOf(s).compareTo(b.itemName.indexOf(s)));
       _catalogController.sink.add(filter);
     } else {
       _catalogController.sink.add(all);
@@ -60,7 +71,12 @@ class CatalogBloc {
     _catalogController.sink.add(all);
   }
 
+  void isShowKeyboardToggle(bool isShow) {
+    _isShowKeyboardController.sink.add(isShow);
+  }
+
   dispose() {
     _catalogController.close();
+    _isShowKeyboardController.close();
   }
 }

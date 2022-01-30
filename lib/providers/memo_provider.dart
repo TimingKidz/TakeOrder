@@ -21,17 +21,19 @@ class MemoDbProvider {
   Future<void> newMemo(Memo newMemo) async {
     final db = await DbProvider.db.database;
     //get the biggest id in the table
-    var table = await db.rawQuery("SELECT MAX(${DbProvider.memoID})+1 as id FROM ${DbProvider.memoTable}");
+    var table = await db.rawQuery(
+        "SELECT MAX(${DbProvider.memoID})+1 as id FROM ${DbProvider.memoTable}");
     int id = int.tryParse(table.first["id"].toString()) ?? 0;
     //insert to the table using the new id
-    if(newMemo.memoContent!.isEmpty) newMemo.memoContent = "MEMO #$id";
+    if (newMemo.memoContent!.isEmpty) newMemo.memoContent = "MEMO #$id";
     await db.rawInsert(
         "INSERT Into ${DbProvider.memoTable} ("
-            "${DbProvider.memoID},"
-            "${DbProvider.memoContent},"
-            "${DbProvider.memoCateID})"
-            " VALUES (?,?,?)",
-        [id, newMemo.memoContent, newMemo.memoCateID]);
+        "${DbProvider.memoID},"
+        "${DbProvider.isMemoEdited},"
+        "${DbProvider.memoContent},"
+        "${DbProvider.memoCateID})"
+        " VALUES (?,?,?,?)",
+        [id, newMemo.isMemoEdited, newMemo.memoContent, newMemo.memoCateID]);
   }
 
   Future<void> updateMemo(Memo old, Memo up) async {
@@ -39,6 +41,7 @@ class MemoDbProvider {
     await db.update(
         DbProvider.memoTable,
         {
+          DbProvider.isMemoEdited: up.isMemoEdited,
           DbProvider.memoContent: up.memoContent,
           DbProvider.memoCateID: up.memoCateID
         },

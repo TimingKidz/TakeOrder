@@ -36,6 +36,8 @@ class SummaryBloc {
         var title = item.itemName.toLowerCase();
         return title.contains(s);
       }).toList();
+      filter.sort(
+          (a, b) => a.itemName.indexOf(s).compareTo(b.itemName.indexOf(s)));
       _summaryController.sink.add(filter);
     } else {
       _summaryController.sink.add(all);

@@ -28,6 +28,15 @@ class _CatalogPageState extends State<CatalogPage> {
   var listPrice = TextEditingController();
   var qty = TextEditingController();
   final SlidableController slidableController = SlidableController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      catalogBloc.isShowKeyboardToggle(false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +65,7 @@ class _CatalogPageState extends State<CatalogPage> {
                   if (snapshot.data!.isNotEmpty) {
                     return Expanded(
                       child: ListView.separated(
+                        controller: _scrollController,
                         physics: BouncingScrollPhysics(),
                         padding: EdgeInsets.only(bottom: 92),
                         itemCount: snapshot.data?.length ?? 0,

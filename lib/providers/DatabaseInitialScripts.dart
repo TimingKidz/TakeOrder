@@ -53,7 +53,7 @@ class DatabaseInitialScript {
   static final _createMemoTable = """
           CREATE TABLE ${DbProvider.memoTable} (
             ${DbProvider.memoID}	INTEGER NOT NULL,
-            ${DbProvider.memoTitle}	TEXT,
+            ${DbProvider.isMemoEdited}	INTEGER,
             ${DbProvider.memoContent}	TEXT,
             ${DbProvider.memoCateID}	INTEGER,
             FOREIGN KEY(${DbProvider.memoCateID}) REFERENCES ${DbProvider.categoriesTable}(${DbProvider.cateID}) ON DELETE SET NULL,
