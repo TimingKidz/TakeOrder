@@ -40,18 +40,24 @@ class _MemoViewPageState extends State<MemoViewPage> {
           if (snapshot.hasData) {
             return WillPopScope(
               onWillPop: () async {
-                if (content.text == _eachMemoBloc.fMemo.memoContent &&
-                    _eachMemoBloc.fMemoEdited == null) {
-                  Navigator.pop(context, false);
-                  return false;
-                }
-                _eachMemoBloc.setMemoContent(content.text);
-                _eachMemoBloc.update();
-                _eachMemoBloc.dispose();
-                Navigator.pop(context, true);
+                Navigator.pop(context, false);
                 return false;
               },
               child: Scaffold(
+                floatingActionButton: FloatingActionButton(
+                  backgroundColor: Colors.orange,
+                  onPressed: () {
+                    if (content.text == _eachMemoBloc.fMemo.memoContent &&
+                        _eachMemoBloc.fMemoEdited == null) {
+                      Navigator.pop(context, false);
+                    }
+                    _eachMemoBloc.setMemoContent(content.text);
+                    _eachMemoBloc.update();
+                    _eachMemoBloc.dispose();
+                    Navigator.pop(context, true);
+                  },
+                  child: Icon(Icons.check),
+                ),
                 appBar: AppBar(
                   actions: [
                     Center(
@@ -82,9 +88,9 @@ class _MemoViewPageState extends State<MemoViewPage> {
                             int? cateID = newValue == "None"
                                 ? null
                                 : widget.cateBloc.all
-                                    .firstWhere((element) =>
-                                        element.cateName == newValue)
-                                    .cateID;
+                                .firstWhere((element) =>
+                            element.cateName == newValue)
+                                .cateID;
                             _eachMemoBloc.setMemoCategory(newValue!, cateID!);
                           },
                           items: <DropdownMenuItem<String>>[
