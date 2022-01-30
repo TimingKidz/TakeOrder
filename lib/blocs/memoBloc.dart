@@ -16,6 +16,7 @@ class MemoBloc {
   List<Memo> editedList = [];
   List<Memo> exportList = [];
   String dropdownValue = "All";
+  String _searchFilterText = "";
 
   final _memoController = StreamController<List<Memo>>.broadcast();
   final _isShowKeyboardController = StreamController<bool>.broadcast();
@@ -53,6 +54,7 @@ class MemoBloc {
   }
 
   Future<void> searchFilter(String s) async {
+    _searchFilterText = s;
     List<Memo> filList = prefs?.getString("memoCate") == "All" ? all : focus;
     if (s.isNotEmpty) {
       List<Memo> filter = filList.where((memo) {
@@ -71,17 +73,32 @@ class MemoBloc {
   Future<void> filter() async {
     if(dropdownValue == "All"){
       focus = all;
-      _memoController.sink.add(all);
+
+      if (_searchFilterText.isNotEmpty) {
+        searchFilter(_searchFilterText);
+      } else {
+        _memoController.sink.add(all);
+      }
     }else if(dropdownValue == "Unfiled"){
       List<Memo> filter =
           all.where((memo) => memo.memoCateName == null).toList();
       focus = filter;
-      _memoController.sink.add(filter);
+
+      if (_searchFilterText.isNotEmpty) {
+        searchFilter(_searchFilterText);
+      } else {
+        _memoController.sink.add(filter);
+      }
     } else {
       List<Memo> filter =
           all.where((memo) => memo.memoCateName == dropdownValue).toList();
       focus = filter;
-      _memoController.sink.add(filter);
+
+      if (_searchFilterText.isNotEmpty) {
+        searchFilter(_searchFilterText);
+      } else {
+        _memoController.sink.add(filter);
+      }
     }
     await prefs?.setString("memoCate", dropdownValue);
   }
