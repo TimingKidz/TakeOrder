@@ -186,7 +186,7 @@ class _CatalogPageState extends State<CatalogPage> {
 
   Future<void> addItemToOrder() async {
     await widget.orderBloc.addAllToOrder(catalogBloc.selectedItem);
-    catalogBloc.addItemToOrder();
+    catalogBloc.clearSelectedItems();
   }
 
   Future<void> addItem() async {

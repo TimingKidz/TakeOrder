@@ -34,7 +34,7 @@ class CatalogBloc {
     }
   }
 
-  void addItemToOrder() {
+  void clearSelectedItems() {
     selectedItem.clear();
     isHaveItemSelectedToggle();
     getCatalog();
