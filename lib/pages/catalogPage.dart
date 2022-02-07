@@ -4,10 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:invoice_manage/blocs/catalogBloc.dart';
 import 'package:invoice_manage/blocs/orderBloc.dart';
 import 'package:invoice_manage/model/item.dart';
-import 'package:invoice_manage/model/orderList.dart';
 import 'package:invoice_manage/utils/Formatters.dart';
 import 'package:invoice_manage/widget/addItem_dialog.dart';
-import 'package:invoice_manage/widget/addtoOrder_dialog.dart';
 import 'package:invoice_manage/widget/catalogedit_dialog.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
 import 'package:invoice_manage/widget/yesno_dialog.dart';
@@ -54,9 +52,10 @@ class _CatalogPageState extends State<CatalogPage> {
             if (snapshot.data ?? false) {
               return fabAddToOrder();
             } else {
-              return FloatingActionButton(
+              return FloatingActionButton.extended(
                 onPressed: () => addItem(),
-                child: Icon(Icons.add),
+                icon: Icon(Icons.add),
+                label: Text("New Item"),
               );
             }
           }),
@@ -159,7 +158,7 @@ class _CatalogPageState extends State<CatalogPage> {
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Icon(Icons.add),
               ),
-              onPressed: () {},
+              onPressed: () => addItemToOrder(),
               style: ButtonStyle(
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.white),
@@ -171,7 +170,9 @@ class _CatalogPageState extends State<CatalogPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text("QTY: 1"),
               ),
-              onPressed: () {},
+              onPressed: () {
+                // TODO: Implement QTY dialog.
+              },
               style: ButtonStyle(
                   foregroundColor:
                       MaterialStateProperty.all<Color>(Colors.white),
@@ -181,6 +182,11 @@ class _CatalogPageState extends State<CatalogPage> {
         ),
       ),
     );
+  }
+
+  Future<void> addItemToOrder() async {
+    await widget.orderBloc.addAllToOrder(catalogBloc.selectedItem);
+    catalogBloc.addItemToOrder();
   }
 
   Future<void> addItem() async {
@@ -228,26 +234,26 @@ class _CatalogPageState extends State<CatalogPage> {
     }
   }
 
-  Future<void> addItemToOrder(Item i) async {
-    listPrice.text = textFieldPriceFormatter(i.itemPrice);
-    qty.text = "1";
-    String t = await showDialog(
-            context: context,
-            builder: (BuildContext context) => AddToOrderDialog(
-                itemName: i.itemName, listPrice: listPrice, qty: qty)) ??
-        "Cancel";
-    int o =
-        widget.orderBloc.all.elementAt(widget.orderBloc.pageNum - 1).orderID;
-    if (t == "Add") {
-      OrderList item = OrderList(
-          orderID: o,
-          itemID: i.itemID ?? -1,
-          itemName: i.itemName,
-          listPrice: double.parse(listPrice.text),
-          qty: int.parse(qty.text));
-      widget.orderBloc.add(item);
-    }
-    listPrice.clear();
-    qty.clear();
-  }
+// Future<void> addItemToOrder(Item i) async {
+//   listPrice.text = textFieldPriceFormatter(i.itemPrice);
+//   qty.text = "1";
+//   String t = await showDialog(
+//           context: context,
+//           builder: (BuildContext context) => AddToOrderDialog(
+//               itemName: i.itemName, listPrice: listPrice, qty: qty)) ??
+//       "Cancel";
+//   int o =
+//       widget.orderBloc.all.elementAt(widget.orderBloc.pageNum - 1).orderID;
+//   if (t == "Add") {
+//     OrderList item = OrderList(
+//         orderID: o,
+//         itemID: i.itemID ?? -1,
+//         itemName: i.itemName,
+//         listPrice: double.parse(listPrice.text),
+//         qty: int.parse(qty.text));
+//     widget.orderBloc.add(item);
+//   }
+//   listPrice.clear();
+//   qty.clear();
+// }
 }

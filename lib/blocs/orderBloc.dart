@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:invoice_manage/model/OrderItem.dart';
 import 'package:invoice_manage/model/SummaryData.dart';
+import 'package:invoice_manage/model/item.dart';
 import 'package:invoice_manage/model/memo.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/model/orderList.dart';
@@ -84,6 +85,24 @@ class OrderBloc {
     await OrderDbProvider.db.deleteAllOrder();
     pageNum = 1;
     prefs?.setInt("page", pageNum);
+    await getOrders();
+  }
+
+  Future<void> addAllToOrder(List<Item> itemList) async {
+    double itemAllTotal = 0;
+    int _orderId = all.elementAt(pageNum - 1).orderID;
+    await Future.forEach(itemList, (Item item) async {
+      var orderItem = OrderList(
+          orderID: _orderId,
+          itemID: item.itemID ?? -1,
+          itemName: item.itemName,
+          listPrice: item.itemPrice,
+          qty: 1);
+      double itemTotal = await OrderDbProvider.db.newItem(orderItem);
+      itemAllTotal = itemAllTotal + itemTotal;
+    });
+    await OrderDbProvider.db
+        .updateTotal(_orderId, all.elementAt(pageNum - 1).total + itemAllTotal);
     await getOrders();
   }
 

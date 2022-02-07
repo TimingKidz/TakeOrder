@@ -34,6 +34,12 @@ class CatalogBloc {
     }
   }
 
+  void addItemToOrder() {
+    selectedItem.clear();
+    isHaveItemSelectedToggle();
+    getCatalog();
+  }
+
   Future<void> add(Item item) async {
     await CatalogDbProvider.db.newItem(item);
     await getCatalog();
