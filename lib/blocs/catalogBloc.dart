@@ -67,16 +67,17 @@ class CatalogBloc {
   void setIsSelected(Item selectItem) {
     all = all.map((Item item) {
       if (item.itemID == selectItem.itemID) {
-        if (item.isSelected ?? true) {
-          selectedItem.remove(selectItem);
-        } else {
-          selectedItem.add(selectItem);
-        }
-        return Item(
+        var editItem = Item(
             itemID: item.itemID,
             itemName: item.itemName,
             itemPrice: item.itemPrice,
             isSelected: !(item.isSelected ?? true));
+        if (item.isSelected ?? true) {
+          selectedItem.remove(selectItem);
+        } else {
+          selectedItem.add(editItem);
+        }
+        return editItem;
       } else {
         return item;
       }
