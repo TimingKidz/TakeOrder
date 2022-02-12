@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:invoice_manage/model/item.dart';
 import 'package:invoice_manage/providers/catalog_provider.dart';
 
@@ -25,13 +26,14 @@ class CatalogBloc {
 
   get isHaveItemSelected => _isHaveItemSelectedController.stream;
 
+  final _searchTextEditingController =
+      StreamController<TextEditingController>.broadcast();
+
+  get searchTextEditingController => _searchTextEditingController.stream;
+
   getCatalog() async {
     all = await CatalogDbProvider.db.getAllCatalog();
-    if (_searchFilterText.isNotEmpty) {
-      searchFilter(_searchFilterText);
-    } else {
-      _catalogController.sink.add(all);
-    }
+    searchFilter(_searchFilterText);
   }
 
   void clearSelectedItems() {
@@ -55,7 +57,9 @@ class CatalogBloc {
     await getCatalog();
   }
 
-  Future<void> searchFilter(String s) async {
+  Future<void> searchFilter(String s,
+      [TextEditingController? sController]) async {
+    if (sController != null) _searchTextEditingController.sink.add(sController);
     _searchFilterText = s;
     if (s.isNotEmpty) {
       List<Item> filter = all.where((item) {
@@ -89,7 +93,7 @@ class CatalogBloc {
       }
     }).toList();
     isHaveItemSelectedToggle();
-    _catalogController.sink.add(all);
+    searchFilter(_searchFilterText);
   }
 
   void isShowKeyboardToggle(bool isShow) {
@@ -104,5 +108,6 @@ class CatalogBloc {
     _catalogController.close();
     _isShowKeyboardController.close();
     _isHaveItemSelectedController.close();
+    _searchTextEditingController.close();
   }
 }
