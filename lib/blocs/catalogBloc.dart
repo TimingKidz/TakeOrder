@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:invoice_manage/model/item.dart';
 import 'package:invoice_manage/providers/catalog_provider.dart';
 
@@ -27,11 +26,6 @@ class CatalogBloc {
   final _isHaveItemSelectedController = StreamController<bool>.broadcast();
 
   get isHaveItemSelected => _isHaveItemSelectedController.stream;
-
-  final _searchTextEditingController =
-      StreamController<TextEditingController>.broadcast();
-
-  get searchTextEditingController => _searchTextEditingController.stream;
 
   final _qtyController = StreamController<int>.broadcast();
 
@@ -63,9 +57,7 @@ class CatalogBloc {
     await getCatalog();
   }
 
-  Future<void> searchFilter(String s,
-      [TextEditingController? sController]) async {
-    if (sController != null) _searchTextEditingController.sink.add(sController);
+  Future<void> searchFilter(String s) async {
     _searchFilterText = s;
     if (s.isNotEmpty) {
       List<Item> filter = all.where((item) {
@@ -119,7 +111,6 @@ class CatalogBloc {
     _catalogController.close();
     _isShowKeyboardController.close();
     _isHaveItemSelectedController.close();
-    _searchTextEditingController.close();
     _qtyController.close();
   }
 }

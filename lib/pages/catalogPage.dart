@@ -42,14 +42,14 @@ class _CatalogPageState extends State<CatalogPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<bool>(
-        stream: catalogBloc.isHaveItemSelected,
-        builder: (context, isHaveItemSelectedSnapshot) {
-          bool isHaveItemSelected = isHaveItemSelectedSnapshot.data ?? false;
-          return Scaffold(
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(kToolbarHeight),
-              child: AnimatedSwitcher(
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: StreamBuilder<bool>(
+            stream: catalogBloc.isHaveItemSelected,
+            builder: (context, snapshot) {
+              bool isHaveItemSelected = snapshot.data ?? false;
+              return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 child: isHaveItemSelected
                     ? isHaveItemSelectedAppBar()
@@ -57,9 +57,14 @@ class _CatalogPageState extends State<CatalogPage> {
                         key: ValueKey<int>(1),
                         title: Text("Select Item(s) from Catalog"),
                       ),
-              ),
-            ),
-            floatingActionButton: AnimatedSwitcher(
+              );
+            }),
+      ),
+      floatingActionButton: StreamBuilder<bool>(
+          stream: catalogBloc.isHaveItemSelected,
+          builder: (context, snapshot) {
+            bool isHaveItemSelected = snapshot.data ?? false;
+            return AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               transitionBuilder: (child, animate) =>
                   ScaleTransition(child: child, scale: animate),
@@ -82,37 +87,37 @@ class _CatalogPageState extends State<CatalogPage> {
                         label: Text("New Item"),
                       ),
                     ),
-            ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            body: Column(
-              children: [
-                StreamBuilder<TextEditingController>(
-                    stream: catalogBloc.searchTextEditingController,
-                    builder: (context, snapshot) {
-                      return Container(
-                        padding: const EdgeInsets.all(8.0),
-                        color: Theme.of(context).canvasColor,
-                        child: SearchBar(
-                            bloc: catalogBloc, blocSearchText: snapshot.data),
-                      );
-                    }),
-                StreamBuilder<List<Item>>(
-                    stream: catalogBloc.catalog,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Item>> snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.isNotEmpty) {
-                          return Expanded(
-                            child: ListView.separated(
-                              controller: _scrollController,
-                              physics: BouncingScrollPhysics(),
-                              padding: EdgeInsets.only(bottom: 92),
-                              itemCount: snapshot.data?.length ?? 0,
-                              separatorBuilder: (_, index) {
-                                return Divider(thickness: 1.5, height: 1.5);
-                              },
-                              itemBuilder: (BuildContext context, int index) {
+            );
+          }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Theme.of(context).canvasColor,
+            child: SearchBar(bloc: catalogBloc),
+          ),
+          StreamBuilder<List<Item>>(
+              stream: catalogBloc.catalog,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isNotEmpty) {
+                    return Expanded(
+                      child: ListView.separated(
+                        controller: _scrollController,
+                        physics: BouncingScrollPhysics(),
+                        padding: EdgeInsets.only(bottom: 92),
+                        itemCount: snapshot.data?.length ?? 0,
+                        separatorBuilder: (_, index) {
+                          return Divider(thickness: 1.5, height: 1.5);
+                        },
+                        itemBuilder: (BuildContext context, int index) {
+                          return StreamBuilder<bool>(
+                              stream: catalogBloc.isHaveItemSelected,
+                              builder: (context, isHaveItemSelectedSnapshot) {
+                                bool isHaveItemSelected =
+                                    isHaveItemSelectedSnapshot.data ?? false;
                                 return Slidable(
                                   key: Key(snapshot.data![index].itemName),
                                   controller: slidableController,
@@ -154,24 +159,24 @@ class _CatalogPageState extends State<CatalogPage> {
                                     ),
                                   ],
                                 );
-                              },
-                            ),
-                          );
-                        } else {
-                          return Expanded(
-                              child: Center(
-                                  child: Text(
-                                      "No item in catalog, please add your first item.")));
-                        }
-                      } else {
-                        return Expanded(
-                            child: Center(child: CircularProgressIndicator()));
-                      }
-                    }),
-              ],
-            ),
-          );
-        });
+                              });
+                        },
+                      ),
+                    );
+                  } else {
+                    return Expanded(
+                        child: Center(
+                            child: Text(
+                                "No item in catalog, please add your first item.")));
+                  }
+                } else {
+                  return Expanded(
+                      child: Center(child: CircularProgressIndicator()));
+                }
+              }),
+        ],
+      ),
+    );
   }
 
   AppBar isHaveItemSelectedAppBar() {
