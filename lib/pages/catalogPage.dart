@@ -12,6 +12,7 @@ import 'package:invoice_manage/widget/addItem_dialog.dart';
 import 'package:invoice_manage/widget/catalogedit_dialog.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
 import 'package:invoice_manage/widget/yesno_dialog.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class CatalogPage extends StatefulWidget {
   final OrderBloc orderBloc;
@@ -60,12 +61,21 @@ class _CatalogPageState extends State<CatalogPage> {
             ),
             floatingActionButton: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
-              transitionBuilder: (child, animation) =>
-                  ScaleTransition(child: child, scale: animation),
+              transitionBuilder: (child, animate) =>
+                  ScaleTransition(child: child, scale: animate),
+              layoutBuilder: (currentChild, previousChildren) {
+                return Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    ...previousChildren,
+                    if (currentChild != null) currentChild
+                  ],
+                );
+              },
               child: isHaveItemSelected
                   ? fabAddToOrder()
                   : Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: const EdgeInsets.only(bottom: 4.0),
                       child: FloatingActionButton.extended(
                         onPressed: () => addItem(),
                         icon: Icon(Icons.add),
@@ -202,22 +212,13 @@ class _CatalogPageState extends State<CatalogPage> {
               onPressed: () => addItemToOrder(),
               style: ButtonStyle(
                   foregroundColor:
-                  MaterialStateProperty.all<Color>(Colors.white),
+                      MaterialStateProperty.all<Color>(Colors.white),
                   overlayColor: MaterialStateProperty.all(Colors.black12)),
             ),
             VerticalDivider(thickness: 1.5, width: 1.5, color: Colors.white24),
-            TextButton(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("QTY: 1"),
-              ),
-              onPressed: () {
-                // TODO: Implement QTY dialog.
-              },
-              style: ButtonStyle(
-                  foregroundColor:
-                  MaterialStateProperty.all<Color>(Colors.white),
-                  overlayColor: MaterialStateProperty.all(Colors.black12)),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: numberPicker(),
             ),
           ],
         ),
@@ -225,20 +226,47 @@ class _CatalogPageState extends State<CatalogPage> {
     );
   }
 
+  Widget numberPicker() {
+    return StreamBuilder<int>(
+        stream: catalogBloc.qtyController,
+        builder: (context, snapshot) {
+          var qty = snapshot.data ?? 1;
+          return NumberPicker(
+            value: qty,
+            minValue: 1,
+            maxValue: 1000,
+            step: 1,
+            itemHeight: 30,
+            itemWidth: 30,
+            axis: Axis.horizontal,
+            onChanged: (value) {
+              catalogBloc.setQty(value);
+            },
+            selectedTextStyle: TextStyle(color: Colors.white, fontSize: 18),
+            textStyle: TextStyle(color: Colors.black),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: Colors.white),
+            ),
+          );
+        });
+  }
+
   Future<void> addItemToOrder() async {
-    await widget.orderBloc.addAllToOrder(catalogBloc.selectedItem);
+    await widget.orderBloc
+        .addAllToOrder(catalogBloc.selectedItem, catalogBloc.qty);
     catalogBloc.clearSelectedItems();
   }
 
   Future<void> addItem() async {
     String t = await showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-            AddItemDialog(itemName: itemName, listPrice: itemPrice)) ??
+            context: context,
+            builder: (BuildContext context) =>
+                AddItemDialog(itemName: itemName, listPrice: itemPrice)) ??
         "Cancel";
     if (t == "Add") {
       double itemP =
-      itemPrice.text.isNotEmpty ? double.parse(itemPrice.text) : 0;
+          itemPrice.text.isNotEmpty ? double.parse(itemPrice.text) : 0;
       Item item = Item(itemName: itemName.text, itemPrice: itemP);
       catalogBloc.add(item);
     }
@@ -250,13 +278,13 @@ class _CatalogPageState extends State<CatalogPage> {
     itemName.text = item.itemName;
     itemPrice.text = textFieldPriceFormatter(item.itemPrice);
     String t = await showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-            CatalogEditDialog(itemName: itemName, itemPrice: itemPrice)) ??
+            context: context,
+            builder: (BuildContext context) =>
+                CatalogEditDialog(itemName: itemName, itemPrice: itemPrice)) ??
         "Cancel";
     if (t == "Update") {
       double itemP =
-      itemPrice.text.isNotEmpty ? double.parse(itemPrice.text) : 0;
+          itemPrice.text.isNotEmpty ? double.parse(itemPrice.text) : 0;
       Item newItem = Item(itemName: itemName.text, itemPrice: itemP);
       catalogBloc.update(item, newItem);
     }
@@ -266,9 +294,9 @@ class _CatalogPageState extends State<CatalogPage> {
 
   Future<void> deleteItem(Item item) async {
     String t = await showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-            YesNoDialog(title: 'Delete Item ${item.itemName}')) ??
+            context: context,
+            builder: (BuildContext context) =>
+                YesNoDialog(title: 'Delete Item ${item.itemName}')) ??
         "Cancel";
     if (t == "Yes") {
       catalogBloc.delete(item);

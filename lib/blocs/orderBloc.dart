@@ -88,7 +88,7 @@ class OrderBloc {
     await getOrders();
   }
 
-  Future<void> addAllToOrder(List<Item> itemList) async {
+  Future<void> addAllToOrder(List<Item> itemList, int qty) async {
     double itemAllTotal = 0;
     int _orderId = all.elementAt(pageNum - 1).orderID;
     await Future.forEach(itemList, (Item item) async {
@@ -97,7 +97,7 @@ class OrderBloc {
           itemID: item.itemID ?? -1,
           itemName: item.itemName,
           listPrice: item.itemPrice,
-          qty: 1);
+          qty: qty);
       double itemTotal = await OrderDbProvider.db.newItem(orderItem);
       itemAllTotal = itemAllTotal + itemTotal;
     });

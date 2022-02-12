@@ -7,12 +7,14 @@ import 'package:invoice_manage/providers/catalog_provider.dart';
 class CatalogBloc {
   CatalogBloc() {
     _isHaveItemSelectedController.sink.add(false);
+    _qtyController.sink.add(1);
     getCatalog();
   }
 
   List<Item> all = [];
   List<Item> selectedItem = [];
   String _searchFilterText = "";
+  int qty = 1;
 
   final _catalogController = StreamController<List<Item>>.broadcast();
 
@@ -30,6 +32,10 @@ class CatalogBloc {
       StreamController<TextEditingController>.broadcast();
 
   get searchTextEditingController => _searchTextEditingController.stream;
+
+  final _qtyController = StreamController<int>.broadcast();
+
+  get qtyController => _qtyController.stream;
 
   getCatalog() async {
     all = await CatalogDbProvider.db.getAllCatalog();
@@ -104,10 +110,16 @@ class CatalogBloc {
     _isHaveItemSelectedController.sink.add(selectedItem.isNotEmpty);
   }
 
+  void setQty(int value) {
+    qty = value;
+    _qtyController.sink.add(value);
+  }
+
   dispose() {
     _catalogController.close();
     _isShowKeyboardController.close();
     _isHaveItemSelectedController.close();
     _searchTextEditingController.close();
+    _qtyController.close();
   }
 }
