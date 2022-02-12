@@ -108,6 +108,7 @@ class _CatalogPageState extends State<CatalogPage> {
                                   controller: slidableController,
                                   actionPane: SlidableDrawerActionPane(),
                                   actionExtentRatio: 0.25,
+                                  enabled: !isHaveItemSelected,
                                   child: ListTile(
                                     title: Text(snapshot.data![index].itemName),
                                     trailing: Text(NumberFormat.currency(
