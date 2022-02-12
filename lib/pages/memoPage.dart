@@ -143,7 +143,7 @@ class _MemoPageState extends State<MemoPage> {
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
                             title: Text(
-                                memoTitle(
+                                memoBloc.memoTitle(
                                     snapshot.data![index].memoContent ?? ""),
                                 overflow: TextOverflow.ellipsis),
                             onTap: () {
@@ -177,15 +177,5 @@ class _MemoPageState extends State<MemoPage> {
         ],
       ),
     );
-  }
-
-  String memoTitle(String s) {
-    int idx = s.indexOf("\n");
-    if (idx < 0) {
-      // if(s.length > 10) s = s.substring(0, 20).trim();
-    } else {
-      s = s.substring(0, idx).trim();
-    }
-    return s;
   }
 }
