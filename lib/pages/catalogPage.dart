@@ -60,12 +60,17 @@ class _CatalogPageState extends State<CatalogPage> {
             ),
             floatingActionButton: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(child: child, scale: animation),
               child: isHaveItemSelected
                   ? fabAddToOrder()
-                  : FloatingActionButton.extended(
-                      onPressed: () => addItem(),
-                      icon: Icon(Icons.add),
-                      label: Text("New Item"),
+                  : Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: FloatingActionButton.extended(
+                        onPressed: () => addItem(),
+                        icon: Icon(Icons.add),
+                        label: Text("New Item"),
+                      ),
                     ),
             ),
             floatingActionButtonLocation:
@@ -161,6 +166,7 @@ class _CatalogPageState extends State<CatalogPage> {
   AppBar isHaveItemSelectedAppBar() {
     return AppBar(
       key: ValueKey<int>(0),
+      elevation: 2,
       leading: IconButton(
           icon: Icon(Icons.clear), onPressed: catalogBloc.clearSelectedItems),
       title: Text(
