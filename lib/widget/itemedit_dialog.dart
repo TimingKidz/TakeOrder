@@ -45,7 +45,7 @@ class _ItemEditDialogState extends State<ItemEditDialog> {
                   )),
               keyboardType: TextInputType.number,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*'))
               ],
               validator: (val) {
                 if (val!.isNotEmpty)
@@ -71,7 +71,7 @@ class _ItemEditDialogState extends State<ItemEditDialog> {
                     splashRadius: 18.0,
                   )),
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^-?\d*'))],
               validator: (val) {
                 if (val!.isNotEmpty)
                   return null;
