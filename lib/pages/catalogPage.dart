@@ -222,7 +222,7 @@ class _CatalogPageState extends State<CatalogPage> {
             ),
             VerticalDivider(thickness: 1.5, width: 1.5, color: Colors.white24),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               child: numberPicker(),
             ),
           ],
