@@ -5,7 +5,7 @@ int sortAlphaNum(String a, String b) {
   var aAlpha = a.replaceAll(reAlpha, "");
   var bAlpha = b.replaceAll(reAlpha, "");
 
-  if (aAlpha == bAlpha) {
+  if (aAlpha == bAlpha && aAlpha is int && bAlpha is int) {
     var aNum = int.parse(a.replaceAll(reNum, ""));
     var bNum = int.parse(b.replaceAll(reNum, ""));
     return aNum.compareTo(bNum);

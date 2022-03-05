@@ -63,25 +63,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentPage,
-        selectedItemColor: selectColor(),
-        onTap: (cur) {
-          setState(() {
-            _currentPage = cur;
-          });
-        },
-        selectedFontSize: 12.0,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.note), label: "Memo"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.insert_chart), label: "Summary"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.sticky_note_2), label: "Order"),
-        ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentPage,
+          selectedItemColor: selectColor(),
+          onTap: (cur) {
+            setState(() {
+              _currentPage = cur;
+            });
+          },
+          selectedFontSize: 12.0,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.note), label: "Memo"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.insert_chart), label: "Summary"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.sticky_note_2), label: "Order"),
+          ],
+        ),
+        body: pageRoute[_currentPage],
       ),
-      body: pageRoute[_currentPage],
     );
   }
 

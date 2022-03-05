@@ -36,25 +36,35 @@ class _MemoViewPageState extends State<MemoViewPage> {
     return StreamBuilder<Memo>(
         stream: _eachMemoBloc.memo,
         builder: (context, snapshot) {
-          print(snapshot.data?.memoContent);
           if (snapshot.hasData) {
+            Memo _memo = snapshot.data!;
             return WillPopScope(
               onWillPop: () async {
-                Navigator.pop(context, false);
+                if(content.text.isEmpty) {
+                  await _eachMemoBloc.delete(_memo);
+                  Navigator.pop(context, true);
+                }else{
+                  Navigator.pop(context, false);
+                }
+                _eachMemoBloc.dispose();
                 return false;
               },
               child: Scaffold(
                 floatingActionButton: FloatingActionButton(
                   backgroundColor: Colors.orange,
-                  onPressed: () {
+                  onPressed: () async {
                     if (content.text == _eachMemoBloc.fMemo.memoContent &&
                         _eachMemoBloc.fMemoEdited == null) {
                       Navigator.pop(context, false);
+                    }else if(content.text.isEmpty){
+                      await _eachMemoBloc.delete(_memo);
+                      Navigator.pop(context, true);
+                    }else{
+                      _eachMemoBloc.setMemoContent(content.text);
+                      await _eachMemoBloc.update();
+                      Navigator.pop(context, true);
                     }
-                    _eachMemoBloc.setMemoContent(content.text);
-                    _eachMemoBloc.update();
                     _eachMemoBloc.dispose();
-                    Navigator.pop(context, true);
                   },
                   child: Icon(Icons.check),
                 ),
@@ -76,7 +86,7 @@ class _MemoViewPageState extends State<MemoViewPage> {
                           ],
                         ),
                         child: DropdownButton<String>(
-                          value: snapshot.data?.memoCateName ?? "None",
+                          value: _memo.memoCateName ?? "None",
                           icon: const Icon(Icons.arrow_drop_down),
                           iconSize: 24,
                           elevation: 16,

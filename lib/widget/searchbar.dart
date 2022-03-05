@@ -30,16 +30,15 @@ class SearchBar extends StatelessWidget {
             icon: Icon(Icons.clear),
             onPressed: () {
               searchText.clear();
-              bloc.searchFilter("");
+              bloc.searchFilter(searchText.text);
               textFieldFocusNode.requestFocus();
             },
             splashRadius: 18.0,
           )),
       onChanged: (text) {
         text = text.toLowerCase();
-        bloc.searchFilter(text);
+        bloc.searchFilter(searchText.text);
       },
     );
   }
 }
-
