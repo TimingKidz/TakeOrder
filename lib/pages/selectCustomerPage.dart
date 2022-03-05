@@ -12,6 +12,15 @@ class SelectCustomerPage extends StatefulWidget {
 
 class _SelectCustomerPageState extends State<SelectCustomerPage> {
   final customerBloc = CustomerBloc();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      customerBloc.isShowKeyboardToggle(false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
             child: SearchBar(bloc: customerBloc),
           ),
           StreamBuilder<Iterable<Contact>>(
@@ -38,19 +47,18 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
                 if (snapshot.hasData) {
                   if (snapshot.data!.isNotEmpty) {
                     return Expanded(
-                      child: ListView.builder(
-                        itemCount: snapshot.data?.length,
+                      child: ListView.separated(
+                        controller: _scrollController,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: snapshot.data?.length ?? 0,
+                        separatorBuilder: (_, index) {
+                          return Divider(thickness: 1.5, height: 1.5);
+                        },
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
                             title: Text(
                                 snapshot.data?.elementAt(index).displayName ??
                                     ""),
-                            subtitle: Text(snapshot.data
-                                    ?.elementAt(index)
-                                    .phones
-                                    ?.first
-                                    .value ??
-                                ""),
                             onTap: () => Navigator.pop(context,
                                 snapshot.data?.elementAt(index).displayName),
                             // onTap: () => Navigator.pop(context, snapshot.data![index].cusID),

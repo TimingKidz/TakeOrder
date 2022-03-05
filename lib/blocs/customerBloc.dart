@@ -13,8 +13,11 @@ class CustomerBloc {
   String dropdownValue = "All";
 
   final _customerController = StreamController<Iterable<Contact>>.broadcast();
+  final _isShowKeyboardController = StreamController<bool>.broadcast();
 
   get customer => _customerController.stream;
+
+  get isShowKeyboard => _isShowKeyboardController.stream;
 
   getCustomer() async {
     if (prefs == null) prefs = await SharedPreferences.getInstance();
@@ -28,16 +31,23 @@ class CustomerBloc {
     if (s.isNotEmpty) {
       List<Contact> filter = contacts.where((cus) {
         var displayName = cus.displayName?.toLowerCase() ?? "";
-        var phone = cus.phones?.first.value!.replaceAll(" ", "") ?? "";
-        return displayName.contains(s) || phone.contains(s);
+        return displayName.contains(s);
       }).toList();
+      filter.sort((a, b) =>
+          a.displayName?.indexOf(s).compareTo(b.displayName?.indexOf(s) ?? 0) ??
+          0);
       _customerController.sink.add(filter);
-    } else{
+    } else {
       _customerController.sink.add(contacts);
     }
   }
 
+  void isShowKeyboardToggle(bool isShow) {
+    _isShowKeyboardController.sink.add(isShow);
+  }
+
   dispose() {
     _customerController.close();
+    _isShowKeyboardController.close();
   }
 }

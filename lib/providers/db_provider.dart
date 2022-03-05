@@ -39,7 +39,7 @@ class DbProvider {
   // Memo Table Variables
   static final memoTable = "Memo";
   static final memoID = "memoID";
-  static final memoTitle = "memoTitle";
+  static final isMemoEdited = "isMemoEdited";
   static final memoType = "memoType";
   static final memoContent = "memoContent";
   static final memoCateID = "memoCateID";

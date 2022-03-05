@@ -25,6 +25,7 @@ class _OrderListWidgetState extends State<OrderListWidget> {
       builder: (BuildContext context, AsyncSnapshot<List<OrderList>> snapshot) {
         if (snapshot.hasData) {
           return ListView.separated(
+            physics: BouncingScrollPhysics(),
             itemCount: snapshot.data?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
               OrderList data = snapshot.data![index];
@@ -41,10 +42,17 @@ class _OrderListWidgetState extends State<OrderListWidget> {
                       Text("${data.qty}"),
                     ],
                   ),
-                  title: Text(data.itemName),
-                  subtitle: Text(
-                      NumberFormat.currency(symbol: "", decimalDigits: 2)
-                          .format(data.listPrice)),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(data.itemName),
+                      Text(
+                          NumberFormat.currency(symbol: "", decimalDigits: 2)
+                              .format(data.listPrice),
+                          style:
+                              TextStyle(color: Colors.black45, fontSize: 12.0)),
+                    ],
+                  ),
                   trailing: Text(
                       NumberFormat.currency(symbol: "", decimalDigits: 2)
                           .format(data.listPrice * data.qty)),
@@ -53,7 +61,7 @@ class _OrderListWidgetState extends State<OrderListWidget> {
               ]);
             },
             separatorBuilder: (_, index) {
-              return Divider(thickness: 1.5);
+              return Divider(thickness: 1.5, height: 1.5);
             },
           );
         } else {

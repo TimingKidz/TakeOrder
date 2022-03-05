@@ -73,9 +73,14 @@ class _OrderPageState extends State<OrderPage> {
       body: Listener(
         onPointerMove: (moveEvent) {
           int offset = 10;
-          if (moveEvent.delta.dx > offset) {
+          int offsetY = 2;
+          if (moveEvent.delta.dx > offset &&
+              moveEvent.delta.dy < offsetY &&
+              moveEvent.delta.dy > -offsetY) {
             isSwipeRight = true;
-          } else if (moveEvent.delta.dx < -offset) {
+          } else if (moveEvent.delta.dx < -offset &&
+              moveEvent.delta.dy < offsetY &&
+              moveEvent.delta.dy > -offsetY) {
             isSwipeLeft = true;
           }
         },
@@ -93,7 +98,7 @@ class _OrderPageState extends State<OrderPage> {
           children: [
             Expanded(
               child: Container(
-                margin: EdgeInsets.all(8.0),
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(width: 1.5, color: Colors.black45),
                 ),
@@ -154,7 +159,6 @@ class _OrderPageState extends State<OrderPage> {
                     );
                   }),
             ),
-            SizedBox(height: 8.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -375,9 +379,21 @@ class _OrderPageState extends State<OrderPage> {
             context: context,
             builder: (BuildContext context) => DeleteOrderDialog()) ??
         "Cancel";
-    if (t == "Delete")
-      orderBloc.deleteOrderHead();
-    else if (t == "DeleteAll") orderBloc.deleteAllOrder();
+    if (t == "Delete") {
+      String t = await showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  YesNoDialog(title: "Delete this order ?")) ??
+          "Cancel";
+      if (t == "Yes") orderBloc.deleteOrderHead();
+    } else if (t == "DeleteAll") {
+      String t = await showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  YesNoDialog(title: "Delete all orders ?")) ??
+          "Cancel";
+      if (t == "Yes") orderBloc.deleteAllOrder();
+    }
   }
 
   Future<void> exportsOrder() async {
@@ -446,10 +462,7 @@ class _OrderPageState extends State<OrderPage> {
                     ),
                     onTap: () async {
                       FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        allowedExtensions: ['db'],
-                      );
+                          await FilePicker.platform.pickFiles();
 
                       if (result != null) {
                         File file = File(result.files.single.path ?? "");

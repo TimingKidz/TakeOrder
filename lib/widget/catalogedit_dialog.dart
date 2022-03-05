@@ -13,6 +13,8 @@ class CatalogEditDialog extends StatefulWidget {
 
 class _CatalogEditDialogState extends State<CatalogEditDialog> {
   final _formKey = GlobalKey<FormState>();
+  var itemNameFocusNode = FocusNode();
+  var itemPriceFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +28,19 @@ class _CatalogEditDialogState extends State<CatalogEditDialog> {
           children: [
             TextFormField(
               controller: widget.itemName,
+              focusNode: itemNameFocusNode,
               decoration: InputDecoration(
                   hintText: "Item Name",
                   labelText: "Item Name",
-                  border: OutlineInputBorder()
-              ),
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      widget.itemName.clear();
+                      itemNameFocusNode.requestFocus();
+                    },
+                    splashRadius: 18.0,
+                  )),
               validator: (val) {
                 if(val!.isNotEmpty) return null;
                 else return "Please fill in item name.";
@@ -39,13 +49,21 @@ class _CatalogEditDialogState extends State<CatalogEditDialog> {
             SizedBox(height: 16.0),
             TextFormField(
               controller: widget.itemPrice,
+              focusNode: itemPriceFocusNode,
               decoration: InputDecoration(
                   hintText: "Item Price",
                   labelText: "Item Price",
-                  border: OutlineInputBorder()
-              ),
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      widget.itemPrice.clear();
+                      itemPriceFocusNode.requestFocus();
+                    },
+                    splashRadius: 18.0,
+                  )),
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
             ),
           ],
         ),

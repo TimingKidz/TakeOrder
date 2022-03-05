@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:intl/intl.dart';
+import 'package:invoice_manage/model/OrderItem.dart';
+import 'package:invoice_manage/model/SummaryData.dart';
+import 'package:invoice_manage/model/item.dart';
 import 'package:invoice_manage/model/memo.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/model/orderList.dart';
@@ -85,6 +88,24 @@ class OrderBloc {
     await getOrders();
   }
 
+  Future<void> addAllToOrder(List<Item> itemList, int qty) async {
+    double itemAllTotal = 0;
+    int _orderId = all.elementAt(pageNum - 1).orderID;
+    await Future.forEach(itemList, (Item item) async {
+      var orderItem = OrderList(
+          orderID: _orderId,
+          itemID: item.itemID ?? -1,
+          itemName: item.itemName,
+          listPrice: item.itemPrice,
+          qty: qty);
+      double itemTotal = await OrderDbProvider.db.newItem(orderItem);
+      itemAllTotal = itemAllTotal + itemTotal;
+    });
+    await OrderDbProvider.db
+        .updateTotal(_orderId, all.elementAt(pageNum - 1).total + itemAllTotal);
+    await getOrders();
+  }
+
   Future<void> add(OrderList orderItem) async {
     double itemTotal = await OrderDbProvider.db.newItem(orderItem);
     await OrderDbProvider.db.updateTotal(
@@ -158,6 +179,7 @@ class OrderBloc {
             "\nTOTAL: ${element.total}";
         String content = title + order;
         Memo m = Memo(
+          isMemoEdited: false,
           memoContent: content,
         );
         await MemoDbProvider.db.newMemo(m); // Each order memo
@@ -166,20 +188,20 @@ class OrderBloc {
   }
 
   Future<void> _exportSummary() async {
-    List<dynamic> info = await OrderDbProvider.db.getSummary();
+    SummaryData info = await OrderDbProvider.db.getSummary();
     String title = "SALES SUMMARY FOR ${dateFormat(DateTime.now())}\n";
     String order = "";
-    info.elementAt(0).forEach((each) {
-      order += "${each["qty"]},${each["itemName"]},${each["SubTotal"]}\n";
+    info.orderItemList.forEach((OrderItem each) {
+      order += "${each.qty},${each.itemName},${each.subTotal}\n";
     });
 
     String payTypeTotal =
-        "  Cash Total: ${info.elementAt(2)["Cash Sale"] ?? 0.0}\n"
-        "  Invoice Total: ${info.elementAt(2)["Invoice"] ?? 0.0}\n";
+        "  Cash Total: ${info.payTypeTotalMap["Cash Sale"] ?? 0.0}\n"
+        "  Invoice Total: ${info.payTypeTotalMap["Invoice"] ?? 0.0}\n";
 
-    String content =
-        title + order + "TOTAL: ${info.elementAt(1)}\n" + payTypeTotal;
+    String content = title + order + "TOTAL: ${info.totals}\n" + payTypeTotal;
     Memo m = Memo(
+      isMemoEdited: false,
       memoContent: content,
     );
     await MemoDbProvider.db.newMemo(m); // Summary memo

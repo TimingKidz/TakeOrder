@@ -82,9 +82,9 @@ class _AddMemoState extends State<AddMemo> {
               ? null
               : widget.cateBloc.all.firstWhere((element) => element.cateName == dropdownValue).cateID;
           Memo memo = Memo(
+              isMemoEdited: true,
               memoContent: content.text,
-              memoCateID: cateID
-          );
+              memoCateID: cateID);
           await widget.memoBloc.add(memo);
           Navigator.pop(context, memo);
         },
