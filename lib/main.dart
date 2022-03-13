@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:invoice_manage/pages/SummaryPage.dart';
+import 'package:invoice_manage/base/Injector.dart';
+// import 'package:invoice_manage/pages/SummaryPage.dart';
 import 'package:invoice_manage/pages/memoPage.dart';
 import 'package:invoice_manage/pages/orderPage.dart';
+import 'package:invoice_manage/summary/domain/usecases/GetSummaryUseCase.dart';
+import 'package:invoice_manage/summary/presentation/SummaryPage.dart';
+import 'package:invoice_manage/summary/presentation/SummaryProvider.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle.dark.copyWith(
@@ -24,6 +29,9 @@ void main() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp
   ]);
+
+  await initializeDependencies();
+
   runApp(MyApp());
 }
 
@@ -59,7 +67,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentPage = 2;
 
-  final List<Widget> pageRoute = [MemoPage(), SummaryPage(), OrderPage()];
+  final List<Widget> pageRoute = [MemoPage(), getIt<SummaryPage>(), OrderPage()];
 
   @override
   Widget build(BuildContext context) {

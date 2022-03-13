@@ -32,15 +32,15 @@ class _SummaryPageState extends State<SummaryPage> {
               child: SearchBar(bloc: summaryBloc),
             ),
           ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                border: Border.all(width: 1.5, color: Colors.black45),
-              ),
-              child: SummaryListWidget(summaryBloc: summaryBloc),
-            ),
-          ),
+          // Expanded(
+          //   child: Container(
+          //     margin: EdgeInsets.all(8.0),
+          //     decoration: BoxDecoration(
+          //       border: Border.all(width: 1.5, color: Colors.black45),
+          //     ),
+          //     child: SummaryListWidget(summaryBloc: summaryBloc),
+          //   ),
+          // ),
           SizedBox(height: 8.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
