@@ -37,6 +37,7 @@ class CatalogBloc {
   }
 
   void clearSelectedItems() {
+    setQty(1);
     selectedItem.clear();
     isHaveItemSelectedToggle();
     getCatalog();
