@@ -31,26 +31,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Take Order',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Theme.of(context).canvasColor,
-          foregroundColor: Colors.black,
-            elevation: 0.0),
-        textTheme: TextTheme(
-          headline6: TextStyle(fontSize: 20)
-        )
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+          primarySwatch: Colors.blue,
+          appBarTheme: AppBarTheme(
+              backgroundColor: Theme.of(context).canvasColor,
+              foregroundColor: Colors.black,
+              elevation: 0.0),
+          textTheme: TextTheme(headline6: TextStyle(fontSize: 20))),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();

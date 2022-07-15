@@ -10,9 +10,9 @@ import 'package:invoice_manage/model/item.dart';
 import 'package:invoice_manage/utils/Formatters.dart';
 import 'package:invoice_manage/widget/addItem_dialog.dart';
 import 'package:invoice_manage/widget/catalogedit_dialog.dart';
+import 'package:invoice_manage/widget/qty_dialog.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
 import 'package:invoice_manage/widget/yesno_dialog.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 class CatalogPage extends StatefulWidget {
   final OrderBloc orderBloc;
@@ -28,7 +28,7 @@ class _CatalogPageState extends State<CatalogPage> {
   var itemName = TextEditingController();
   var itemPrice = TextEditingController();
   var listPrice = TextEditingController();
-  var qty = TextEditingController();
+  var qtyTextEditController = TextEditingController();
   final SlidableController slidableController = SlidableController();
   final ScrollController _scrollController = ScrollController();
 
@@ -107,7 +107,7 @@ class _CatalogPageState extends State<CatalogPage> {
                       child: ListView.separated(
                         controller: _scrollController,
                         physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(bottom: 92),
+                        padding: EdgeInsets.only(bottom: 144),
                         itemCount: snapshot.data?.length ?? 0,
                         separatorBuilder: (_, index) {
                           return Divider(thickness: 1.5, height: 1.5);
@@ -195,66 +195,196 @@ class _CatalogPageState extends State<CatalogPage> {
 
   Widget fabAddToOrder() {
     return IntrinsicHeight(
-      child: Card(
-        elevation: 6,
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(30.0)),
-        ),
-        color: Colors.orange,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextButton.icon(
-              label: Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-                child: Text("Add to order"),
-              ),
-              icon: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Icon(Icons.add),
-              ),
-              onPressed: () => addItemToOrder(),
-              style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
-                  overlayColor: MaterialStateProperty.all(Colors.black12)),
-            ),
-            VerticalDivider(thickness: 1.5, width: 1.5, color: Colors.white24),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-              child: numberPicker(),
-            ),
-          ],
-        ),
-      ),
+      child: StreamBuilder<int>(
+          stream: catalogBloc.qtyController,
+          builder: (context, snapshot) {
+            var qty = snapshot.data ?? 1;
+            return Column(
+              children: [
+                Card(
+                  elevation: 6,
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                  color: Colors.orange,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            child: Text("1",
+                                style: TextStyle(
+                                    color: qty == 1
+                                        ? Colors.black
+                                        : Colors.white)),
+                            decoration: BoxDecoration(
+                                color: qty == 1
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20.0)),
+                          ),
+                          onTap: () => catalogBloc.setQty(1),
+                        ),
+                        SizedBox(width: 8.0),
+                        GestureDetector(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            child: Text("2",
+                                style: TextStyle(
+                                    color: qty == 2
+                                        ? Colors.black
+                                        : Colors.white)),
+                            decoration: BoxDecoration(
+                                color: qty == 2
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20.0)),
+                          ),
+                          onTap: () => catalogBloc.setQty(2),
+                        ),
+                        SizedBox(width: 8.0),
+                        GestureDetector(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            child: Text("3",
+                                style: TextStyle(
+                                    color: qty == 3
+                                        ? Colors.black
+                                        : Colors.white)),
+                            decoration: BoxDecoration(
+                                color: qty == 3
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20.0)),
+                          ),
+                          onTap: () => catalogBloc.setQty(3),
+                        ),
+                        SizedBox(width: 8.0),
+                        GestureDetector(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            child: Text("4",
+                                style: TextStyle(
+                                    color: qty == 4
+                                        ? Colors.black
+                                        : Colors.white)),
+                            decoration: BoxDecoration(
+                                color: qty == 4
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20.0)),
+                          ),
+                          onTap: () => catalogBloc.setQty(4),
+                        ),
+                        SizedBox(width: 8.0),
+                        GestureDetector(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            child: Text("5",
+                                style: TextStyle(
+                                    color: qty == 5
+                                        ? Colors.black
+                                        : Colors.white)),
+                            decoration: BoxDecoration(
+                                color: qty == 5
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20.0)),
+                          ),
+                          onTap: () => catalogBloc.setQty(5),
+                        ),
+                        SizedBox(width: 8.0),
+                        GestureDetector(
+                          child: Container(
+                            padding:
+                                const EdgeInsets.fromLTRB(12.0, 8.0, 8.0, 8.0),
+                            child: Row(
+                              children: [
+                                Text(qty > 5 ? "$qty" : "...",
+                                    style: TextStyle(
+                                        color: qty > 5
+                                            ? Colors.black
+                                            : Colors.white)),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 2.0),
+                                  child: Icon(Icons.edit,
+                                      size: 16.0,
+                                      color: qty > 5
+                                          ? Colors.black
+                                          : Colors.white),
+                                )
+                              ],
+                            ),
+                            decoration: BoxDecoration(
+                                color:
+                                    qty > 5 ? Colors.white : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20.0)),
+                          ),
+                          onTap: () => setQty(),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                Card(
+                  elevation: 6,
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                  ),
+                  color: Colors.orange,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton.icon(
+                        label: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+                          child: Text("Add to order"),
+                        ),
+                        icon: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Icon(Icons.add),
+                        ),
+                        onPressed: () => addItemToOrder(),
+                        style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            overlayColor:
+                                MaterialStateProperty.all(Colors.black12)),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }),
     );
   }
 
-  Widget numberPicker() {
-    return StreamBuilder<int>(
-        stream: catalogBloc.qtyController,
-        builder: (context, snapshot) {
-          var qty = snapshot.data ?? 1;
-          return NumberPicker(
-            value: qty,
-            minValue: 1,
-            maxValue: 1000,
-            step: 1,
-            itemHeight: 30,
-            itemWidth: 30,
-            axis: Axis.horizontal,
-            onChanged: (value) {
-              catalogBloc.setQty(value);
-            },
-            selectedTextStyle: TextStyle(color: Colors.white, fontSize: 18),
-            textStyle: TextStyle(color: Colors.black),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white),
-            ),
-          );
-        });
+  Future<void> setQty() async {
+    String t = await showDialog(
+            context: context,
+            builder: (BuildContext context) =>
+                QtyDialog(qty: qtyTextEditController)) ??
+        "Cancel";
+    if (t == "OK") {
+      if (qtyTextEditController.text.isEmpty) {
+        catalogBloc.setQty(6);
+      } else {
+        catalogBloc.setQty(int.parse(qtyTextEditController.text));
+      }
+    }
+    qtyTextEditController.clear();
   }
 
   Future<void> addItemToOrder() async {
