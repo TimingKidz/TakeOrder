@@ -1,4 +1,6 @@
-import 'package:invoice_manage/providers/db_provider.dart';
+import 'package:invoice_manage/core/local_database_helper.dart';
+
+import '../core/constants/database_constants.dart';
 
 class Categories {
   int? cateID;
@@ -7,11 +9,11 @@ class Categories {
   Categories({this.cateID, required this.cateName});
 
   factory Categories.fromMap(Map<String, dynamic> json) {
-    return Categories(cateID: json[DbProvider.cateID], cateName: json[DbProvider.cateName]);
+    return Categories(
+        cateID: json[DatabaseConstants.cateID],
+        cateName: json[DatabaseConstants.cateName]);
   }
 
-  Map<String, dynamic> toMap() => {
-    DbProvider.cateID: cateID,
-    DbProvider.cateName: cateName
-  };
+  Map<String, dynamic> toMap() =>
+      {DatabaseConstants.cateID: cateID, DatabaseConstants.cateName: cateName};
 }

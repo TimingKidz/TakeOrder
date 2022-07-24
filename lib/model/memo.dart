@@ -1,5 +1,7 @@
 import 'package:invoice_manage/model/memoList.dart';
-import 'package:invoice_manage/providers/db_provider.dart';
+import 'package:invoice_manage/core/local_database_helper.dart';
+
+import '../core/constants/database_constants.dart';
 
 class Memo {
   int? memoID;
@@ -19,19 +21,18 @@ class Memo {
 
   factory Memo.fromMap(Map<String, dynamic> json) {
     return Memo(
-        memoID: json[DbProvider.memoID],
-        isMemoEdited: json[DbProvider.isMemoEdited] == 1,
-        memoContent: json[DbProvider.memoContent],
-        memoCateID: json[DbProvider.memoCateID],
-        memoCateName: json[DbProvider.cateName],
+        memoID: json[DatabaseConstants.memoID],
+        isMemoEdited: json[DatabaseConstants.isMemoEdited] == 1,
+        memoContent: json[DatabaseConstants.memoContent],
+        memoCateID: json[DatabaseConstants.memoCateID],
+        memoCateName: json[DatabaseConstants.cateName],
         list: []);
   }
 
-  Map<String, dynamic> toMap() =>
-      {
-        DbProvider.memoID: memoID,
-        DbProvider.isMemoEdited: isMemoEdited ? 1 : 0,
-        DbProvider.memoContent: memoContent,
-        DbProvider.memoCateID: memoCateID
+  Map<String, dynamic> toMap() => {
+        DatabaseConstants.memoID: memoID,
+        DatabaseConstants.isMemoEdited: isMemoEdited ? 1 : 0,
+        DatabaseConstants.memoContent: memoContent,
+        DatabaseConstants.memoCateID: memoCateID
       };
 }

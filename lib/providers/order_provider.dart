@@ -2,7 +2,9 @@ import 'package:invoice_manage/model/OrderItem.dart';
 import 'package:invoice_manage/model/SummaryData.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/model/orderList.dart';
-import 'package:invoice_manage/providers/db_provider.dart';
+import 'package:invoice_manage/core/local_database_helper.dart';
+
+import '../core/constants/database_constants.dart';
 
 class OrderDbProvider {
   OrderDbProvider._();
@@ -11,29 +13,30 @@ class OrderDbProvider {
 
   Future<List<Order>> getAllOrders() async {
     // OrderHead Insert
-    final db = await DbProvider.db.database;
+    final db = await LocalDatabaseHelper.db.database;
     var res = await db.rawQuery('''
-      SELECT ${DbProvider.orderID},
-      ${DbProvider.payType},
-      ${DbProvider.soldTo},
-      ${DbProvider.total},
-      ${DbProvider.date}
-      FROM ${DbProvider.orderHeadTable}
+      SELECT ${DatabaseConstants.orderID},
+      ${DatabaseConstants.payType},
+      ${DatabaseConstants.soldTo},
+      ${DatabaseConstants.total},
+      ${DatabaseConstants.date}
+      FROM ${DatabaseConstants.orderHeadTable}
     ''');
-    List<Order> list = res.isNotEmpty ? res.map((c) => Order.fromMap(c)).toList() : [];
+    List<Order> list =
+        res.isNotEmpty ? res.map((c) => Order.fromMap(c)).toList() : [];
 
     // OrderList Insert
     res = await db.rawQuery('''
-      SELECT ${DbProvider.orderListId},
-      ${DbProvider.orderHeadTable}.${DbProvider.orderID},
-      ${DbProvider.catalogTable}.${DbProvider.itemID},
-      ${DbProvider.itemName},
-      ${DbProvider.listPrice},
-      ${DbProvider.qty}
-      FROM ${DbProvider.orderHeadTable}
-      JOIN ${DbProvider.orderListTable} ON ${DbProvider.orderListTable}.${DbProvider.orderID} == ${DbProvider.orderHeadTable}.${DbProvider.orderID}
-      JOIN ${DbProvider.catalogTable} ON ${DbProvider.orderListTable}.${DbProvider.itemID} == ${DbProvider.catalogTable}.${DbProvider.itemID}
-      ORDER BY ${DbProvider.orderHeadTable}.${DbProvider.orderID}
+      SELECT ${DatabaseConstants.orderListId},
+      ${DatabaseConstants.orderHeadTable}.${DatabaseConstants.orderID},
+      ${DatabaseConstants.catalogTable}.${DatabaseConstants.itemID},
+      ${DatabaseConstants.itemName},
+      ${DatabaseConstants.listPrice},
+      ${DatabaseConstants.qty}
+      FROM ${DatabaseConstants.orderHeadTable}
+      JOIN ${DatabaseConstants.orderListTable} ON ${DatabaseConstants.orderListTable}.${DatabaseConstants.orderID} == ${DatabaseConstants.orderHeadTable}.${DatabaseConstants.orderID}
+      JOIN ${DatabaseConstants.catalogTable} ON ${DatabaseConstants.orderListTable}.${DatabaseConstants.itemID} == ${DatabaseConstants.catalogTable}.${DatabaseConstants.itemID}
+      ORDER BY ${DatabaseConstants.orderHeadTable}.${DatabaseConstants.orderID}
     ''');
 
     if (res.isNotEmpty) {
@@ -47,21 +50,21 @@ class OrderDbProvider {
   }
 
   Future<SummaryData> getSummary() async {
-    final db = await DbProvider.db.database;
+    final db = await LocalDatabaseHelper.db.database;
     var itemTotal = await db.rawQuery("""
-      SELECT SUM(${DbProvider.qty}) as qty, ${DbProvider.catalogTable}.${DbProvider.itemName}, SUM(${DbProvider.listPrice} * ${DbProvider.qty}) as SubTotal
-      FROM ${DbProvider.orderListTable}
-      JOIN ${DbProvider.catalogTable} ON ${DbProvider.orderListTable}.${DbProvider.itemID} == ${DbProvider.catalogTable}.${DbProvider.itemID}
-      GROUP BY ${DbProvider.orderListTable}.${DbProvider.itemID}
+      SELECT SUM(${DatabaseConstants.qty}) as qty, ${DatabaseConstants.catalogTable}.${DatabaseConstants.itemName}, SUM(${DatabaseConstants.listPrice} * ${DatabaseConstants.qty}) as SubTotal
+      FROM ${DatabaseConstants.orderListTable}
+      JOIN ${DatabaseConstants.catalogTable} ON ${DatabaseConstants.orderListTable}.${DatabaseConstants.itemID} == ${DatabaseConstants.catalogTable}.${DatabaseConstants.itemID}
+      GROUP BY ${DatabaseConstants.orderListTable}.${DatabaseConstants.itemID}
     """);
     var total = await db.rawQuery("""
-      SELECT SUM(${DbProvider.total}) as Total
-      FROM ${DbProvider.orderHeadTable}
+      SELECT SUM(${DatabaseConstants.total}) as Total
+      FROM ${DatabaseConstants.orderHeadTable}
     """);
     var payTypeTotal = await db.rawQuery("""
-      SELECT ${DbProvider.payType}, SUM(${DbProvider.total}) as TypeTotal
-      FROM ${DbProvider.orderHeadTable}
-      GROUP BY ${DbProvider.payType}
+      SELECT ${DatabaseConstants.payType}, SUM(${DatabaseConstants.total}) as TypeTotal
+      FROM ${DatabaseConstants.orderHeadTable}
+      GROUP BY ${DatabaseConstants.payType}
     """);
 
     Map<String, dynamic> payTypeTotalMap = {};
@@ -80,46 +83,41 @@ class OrderDbProvider {
   }
 
   Future<void> addOrderHead() async {
-    final db = await DbProvider.db.database;
+    final db = await LocalDatabaseHelper.db.database;
     //get the biggest id in the table
-    var table = await db.rawQuery("SELECT MAX(${DbProvider.orderID})+1 as id FROM ${DbProvider.orderHeadTable}");
+    var table = await db.rawQuery(
+        "SELECT MAX(${DatabaseConstants.orderID})+1 as id FROM ${DatabaseConstants.orderHeadTable}");
     int id = int.tryParse(table.first["id"].toString()) ?? 0;
     // Insert new OrderHead
     await db.rawInsert(
-        "INSERT Into ${DbProvider.orderHeadTable} (${DbProvider.orderID},${DbProvider.payType},${DbProvider.total},${DbProvider.date})"
-            " VALUES (?,?,?,?)",
+        "INSERT Into ${DatabaseConstants.orderHeadTable} (${DatabaseConstants.orderID},${DatabaseConstants.payType},${DatabaseConstants.total},${DatabaseConstants.date})"
+        " VALUES (?,?,?,?)",
         [id, "Cash Sale", 0, DateTime.now().toIso8601String()]);
   }
 
   Future<void> clearOrder(int id) async {
-    final db = await DbProvider.db.database;
-    await db.delete(
-        DbProvider.orderListTable,
-        where: "${DbProvider.orderID} = ?",
-        whereArgs: [id]
-    );
+    final db = await LocalDatabaseHelper.db.database;
+    await db.delete(DatabaseConstants.orderListTable,
+        where: "${DatabaseConstants.orderID} = ?", whereArgs: [id]);
   }
 
   Future<void> deleteOrderHead(int id) async {
-    final db = await DbProvider.db.database;
-    await db.delete(
-        DbProvider.orderHeadTable,
-        where: "${DbProvider.orderID} = ?",
-        whereArgs: [id]
-    );
+    final db = await LocalDatabaseHelper.db.database;
+    await db.delete(DatabaseConstants.orderHeadTable,
+        where: "${DatabaseConstants.orderID} = ?", whereArgs: [id]);
   }
 
   Future<void> deleteAllOrder() async {
-    final db = await DbProvider.db.database;
-    await db.delete(DbProvider.orderHeadTable);
+    final db = await LocalDatabaseHelper.db.database;
+    await db.delete(DatabaseConstants.orderHeadTable);
     await db.rawInsert(
-        "INSERT Into ${DbProvider.orderHeadTable} (${DbProvider.orderID},${DbProvider.payType},${DbProvider.total},${DbProvider.date})"
-            " VALUES (?,?,?,?)",
+        "INSERT Into ${DatabaseConstants.orderHeadTable} (${DatabaseConstants.orderID},${DatabaseConstants.payType},${DatabaseConstants.total},${DatabaseConstants.date})"
+        " VALUES (?,?,?,?)",
         [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
   }
 
   Future<double> newItem(OrderList newItem) async {
-    final db = await DbProvider.db.database;
+    final db = await LocalDatabaseHelper.db.database;
 
     updateTime(newItem.orderID);
 
@@ -127,69 +125,55 @@ class OrderDbProvider {
     int qty = newItem.qty;
 
     await db.rawInsert(
-        "INSERT Into ${DbProvider.orderListTable} (${DbProvider.orderID},${DbProvider.itemID},${DbProvider.listPrice},${DbProvider.qty})"
-            " VALUES (?,?,?,?)",
+        "INSERT Into ${DatabaseConstants.orderListTable} (${DatabaseConstants.orderID},${DatabaseConstants.itemID},${DatabaseConstants.listPrice},${DatabaseConstants.qty})"
+        " VALUES (?,?,?,?)",
         [newItem.orderID, newItem.itemID, newItem.listPrice, newItem.qty]);
 
     return lPrice * qty;
   }
 
   Future<double> updateItem(OrderList upItem, double listPrice, int qty) async {
-    final db = await DbProvider.db.database;
-    await db.update(
-        DbProvider.orderListTable,
-        {DbProvider.listPrice: listPrice, DbProvider.qty: qty},
-        where: "${DbProvider.orderListId} = ?",
+    final db = await LocalDatabaseHelper.db.database;
+    await db.update(DatabaseConstants.orderListTable,
+        {DatabaseConstants.listPrice: listPrice, DatabaseConstants.qty: qty},
+        where: "${DatabaseConstants.orderListId} = ?",
         whereArgs: [upItem.orderListID]);
     return listPrice * qty;
   }
 
   Future<double> deleteItem(OrderList delItem) async {
-    final db = await DbProvider.db.database;
-    await db.delete(
-        DbProvider.orderListTable,
-        where: "${DbProvider.orderListId} = ?",
+    final db = await LocalDatabaseHelper.db.database;
+    await db.delete(DatabaseConstants.orderListTable,
+        where: "${DatabaseConstants.orderListId} = ?",
         whereArgs: [delItem.orderListID]);
     return delItem.listPrice * delItem.qty;
   }
 
   Future<void> updatePayType(int headID, String type) async {
-    final db = await DbProvider.db.database;
+    final db = await LocalDatabaseHelper.db.database;
     await db.update(
-        DbProvider.orderHeadTable,
-        {DbProvider.payType: type},
-        where: "${DbProvider.orderID} = ?",
-        whereArgs: [headID]
-    );
+        DatabaseConstants.orderHeadTable, {DatabaseConstants.payType: type},
+        where: "${DatabaseConstants.orderID} = ?", whereArgs: [headID]);
   }
 
   Future<void> updateSoldTo(int headID, dynamic cusID) async {
-    final db = await DbProvider.db.database;
+    final db = await LocalDatabaseHelper.db.database;
     await db.update(
-        DbProvider.orderHeadTable,
-        {DbProvider.soldTo: cusID},
-        where: "${DbProvider.orderID} = ?",
-        whereArgs: [headID]
-    );
+        DatabaseConstants.orderHeadTable, {DatabaseConstants.soldTo: cusID},
+        where: "${DatabaseConstants.orderID} = ?", whereArgs: [headID]);
   }
 
   Future<void> updateTotal(int headID, double total) async {
-    final db = await DbProvider.db.database;
+    final db = await LocalDatabaseHelper.db.database;
     await db.update(
-        DbProvider.orderHeadTable,
-        {DbProvider.total: total},
-        where: "${DbProvider.orderID} = ?",
-        whereArgs: [headID]
-    );
+        DatabaseConstants.orderHeadTable, {DatabaseConstants.total: total},
+        where: "${DatabaseConstants.orderID} = ?", whereArgs: [headID]);
   }
 
   Future<void> updateTime(int orderID) async {
-    final db = await DbProvider.db.database;
-    await db.update(
-        DbProvider.orderHeadTable,
-        {DbProvider.date: DateTime.now().toIso8601String()},
-        where: "${DbProvider.orderID} = ?",
-        whereArgs: [orderID]
-    );
+    final db = await LocalDatabaseHelper.db.database;
+    await db.update(DatabaseConstants.orderHeadTable,
+        {DatabaseConstants.date: DateTime.now().toIso8601String()},
+        where: "${DatabaseConstants.orderID} = ?", whereArgs: [orderID]);
   }
 }

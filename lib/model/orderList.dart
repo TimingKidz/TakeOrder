@@ -1,4 +1,6 @@
-import 'package:invoice_manage/providers/db_provider.dart';
+import 'package:invoice_manage/core/local_database_helper.dart';
+
+import '../core/constants/database_constants.dart';
 
 class OrderList {
   late int? orderListID;
@@ -18,18 +20,18 @@ class OrderList {
 
   factory OrderList.fromMap(Map<String, dynamic> json) {
     return OrderList(
-        orderListID: json[DbProvider.orderListId],
-        orderID: json[DbProvider.orderID],
-        itemID: json[DbProvider.itemID],
-        itemName: json[DbProvider.itemName],
-        listPrice: json[DbProvider.listPrice],
-        qty: json[DbProvider.qty]);
+        orderListID: json[DatabaseConstants.orderListId],
+        orderID: json[DatabaseConstants.orderID],
+        itemID: json[DatabaseConstants.itemID],
+        itemName: json[DatabaseConstants.itemName],
+        listPrice: json[DatabaseConstants.listPrice],
+        qty: json[DatabaseConstants.qty]);
   }
 
   Map<String, dynamic> toMap() => {
-    DbProvider.orderID: orderID,
-    DbProvider.itemID: itemID,
-    DbProvider.listPrice: listPrice,
-    DbProvider.qty: qty
-  };
+        DatabaseConstants.orderID: orderID,
+        DatabaseConstants.itemID: itemID,
+        DatabaseConstants.listPrice: listPrice,
+        DatabaseConstants.qty: qty
+      };
 }

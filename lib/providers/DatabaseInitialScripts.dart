@@ -1,4 +1,5 @@
-import 'db_provider.dart';
+import '../core/constants/database_constants.dart';
+import '../core/local_database_helper.dart';
 
 class DatabaseInitialScript {
   static final initialScripts = [
@@ -10,54 +11,54 @@ class DatabaseInitialScript {
   ];
 
   static final _createCategoriesTable = """
-          CREATE TABLE ${DbProvider.categoriesTable} (
-            ${DbProvider.cateID}	INTEGER NOT NULL,
-            ${DbProvider.cateName} TEXT NOT NULL UNIQUE,
-            PRIMARY KEY(${DbProvider.cateID})
+          CREATE TABLE ${DatabaseConstants.categoriesTable} (
+            ${DatabaseConstants.cateID}	INTEGER NOT NULL,
+            ${DatabaseConstants.cateName} TEXT NOT NULL UNIQUE,
+            PRIMARY KEY(${DatabaseConstants.cateID})
           );
           """;
 
   static final _createCatalogTable = """
-          CREATE TABLE ${DbProvider.catalogTable} (
-            ${DbProvider.itemID}	INTEGER NOT NULL,
-            ${DbProvider.itemName} TEXT NOT NULL UNIQUE,
-            ${DbProvider.itemPrice} REAL NOT NULL,
-            PRIMARY KEY(${DbProvider.itemID})
+          CREATE TABLE ${DatabaseConstants.catalogTable} (
+            ${DatabaseConstants.itemID}	INTEGER NOT NULL,
+            ${DatabaseConstants.itemName} TEXT NOT NULL UNIQUE,
+            ${DatabaseConstants.itemPrice} REAL NOT NULL,
+            PRIMARY KEY(${DatabaseConstants.itemID})
           );
           """;
 
   static final _createOrderHeadTable = """
-          CREATE TABLE ${DbProvider.orderHeadTable} (
-            ${DbProvider.orderID}	INTEGER NOT NULL,
-            ${DbProvider.payType}	TEXT NOT NULL,
-            ${DbProvider.soldTo}	TEXT,
-            ${DbProvider.total}	REAL NOT NULL,
-            ${DbProvider.date} TEXT NOT NULL,
-            PRIMARY KEY(${DbProvider.orderID})
+          CREATE TABLE ${DatabaseConstants.orderHeadTable} (
+            ${DatabaseConstants.orderID}	INTEGER NOT NULL,
+            ${DatabaseConstants.payType}	TEXT NOT NULL,
+            ${DatabaseConstants.soldTo}	TEXT,
+            ${DatabaseConstants.total}	REAL NOT NULL,
+            ${DatabaseConstants.date} TEXT NOT NULL,
+            PRIMARY KEY(${DatabaseConstants.orderID})
           );
           """;
 
   static final _createOrderListTable = """
-          CREATE TABLE ${DbProvider.orderListTable} (
-            ${DbProvider.orderListId} INTEGER NOT NULL,
-            ${DbProvider.orderID}	INTEGER NOT NULL,
-            ${DbProvider.itemID}	INTEGER NOT NULL,
-            ${DbProvider.listPrice}	REAL NOT NULL,
-            ${DbProvider.qty}	INTEGER NOT NULL,
-            PRIMARY KEY(${DbProvider.orderListId})
-            FOREIGN KEY(${DbProvider.orderID}) REFERENCES ${DbProvider.orderHeadTable}(${DbProvider.orderID}) ON DELETE CASCADE,
-            FOREIGN KEY(${DbProvider.itemID}) REFERENCES ${DbProvider.catalogTable}(${DbProvider.itemID}) ON DELETE CASCADE
+          CREATE TABLE ${DatabaseConstants.orderListTable} (
+            ${DatabaseConstants.orderListId} INTEGER NOT NULL,
+            ${DatabaseConstants.orderID}	INTEGER NOT NULL,
+            ${DatabaseConstants.itemID}	INTEGER NOT NULL,
+            ${DatabaseConstants.listPrice}	REAL NOT NULL,
+            ${DatabaseConstants.qty}	INTEGER NOT NULL,
+            PRIMARY KEY(${DatabaseConstants.orderListId})
+            FOREIGN KEY(${DatabaseConstants.orderID}) REFERENCES ${DatabaseConstants.orderHeadTable}(${DatabaseConstants.orderID}) ON DELETE CASCADE,
+            FOREIGN KEY(${DatabaseConstants.itemID}) REFERENCES ${DatabaseConstants.catalogTable}(${DatabaseConstants.itemID}) ON DELETE CASCADE
           );
           """;
 
   static final _createMemoTable = """
-          CREATE TABLE ${DbProvider.memoTable} (
-            ${DbProvider.memoID}	INTEGER NOT NULL,
-            ${DbProvider.isMemoEdited}	INTEGER,
-            ${DbProvider.memoContent}	TEXT,
-            ${DbProvider.memoCateID}	INTEGER,
-            FOREIGN KEY(${DbProvider.memoCateID}) REFERENCES ${DbProvider.categoriesTable}(${DbProvider.cateID}) ON DELETE SET NULL,
-            PRIMARY KEY(${DbProvider.memoID})
+          CREATE TABLE ${DatabaseConstants.memoTable} (
+            ${DatabaseConstants.memoID}	INTEGER NOT NULL,
+            ${DatabaseConstants.isMemoEdited}	INTEGER,
+            ${DatabaseConstants.memoContent}	TEXT,
+            ${DatabaseConstants.memoCateID}	INTEGER,
+            FOREIGN KEY(${DatabaseConstants.memoCateID}) REFERENCES ${DatabaseConstants.categoriesTable}(${DatabaseConstants.cateID}) ON DELETE SET NULL,
+            PRIMARY KEY(${DatabaseConstants.memoID})
           );
           """;
 }

@@ -1,4 +1,6 @@
-import 'package:invoice_manage/providers/db_provider.dart';
+import 'package:invoice_manage/core/local_database_helper.dart';
+
+import '../core/constants/database_constants.dart';
 
 class Item {
   int? itemID;
@@ -14,15 +16,15 @@ class Item {
 
   factory Item.fromMap(Map<String, dynamic> json) {
     return Item(
-        itemID: json[DbProvider.itemID],
-        itemName: json[DbProvider.itemName],
-        itemPrice: json[DbProvider.itemPrice],
+        itemID: json[DatabaseConstants.itemID],
+        itemName: json[DatabaseConstants.itemName],
+        itemPrice: json[DatabaseConstants.itemPrice],
         isSelected: false);
   }
 
   Map<String, dynamic> toMap() => {
-    DbProvider.itemID: itemID,
-    DbProvider.itemName: itemName,
-    DbProvider.itemPrice: itemPrice
-  };
+        DatabaseConstants.itemID: itemID,
+        DatabaseConstants.itemName: itemName,
+        DatabaseConstants.itemPrice: itemPrice
+      };
 }

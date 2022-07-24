@@ -7,54 +7,15 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DbProvider {
-  // Categories Table Variables
-  static final categoriesTable = "Categories";
-  static final cateID = "cateID";
-  static final cateName = "cateName";
+import 'constants/database_constants.dart';
 
-  // Catalog Table Variables
-  static final catalogTable = "Catalog";
-  static final itemID = "itemID";
-  static final itemName = "itemName";
-  static final itemPrice = "itemPrice";
-
-  // Customer Table Variables
-  static final customerTable = "Customer";
-
-  // OrderHead Table Variables
-  static final orderHeadTable = "OrderHead";
-  static final orderID = "orderID";
-  static final payType = "payType";
-  static final soldTo = "soldTo";
-  static final total = "total";
-  static final date = "date";
-
-  // OrderList Table Variables
-  static final orderListId = "id";
-  static final orderListTable = "OrderList";
-  static final listPrice = "listPrice";
-  static final qty = "qty";
-
-  // Memo Table Variables
-  static final memoTable = "Memo";
-  static final memoID = "memoID";
-  static final isMemoEdited = "isMemoEdited";
-  static final memoType = "memoType";
-  static final memoContent = "memoContent";
-  static final memoCateID = "memoCateID";
-
-  // MemoList Variables
-  static final memoListTable = "MemoList";
-  static final memoItemName = "memoItemName";
-  static final memoItemPrice = "memoItemPrice";
-
+class LocalDatabaseHelper {
   static final initialScripts = DatabaseInitialScript.initialScripts;
   static final migrationScripts = DatabaseMigrationScripts.migrationScripts;
 
-  DbProvider._();
+  LocalDatabaseHelper._();
 
-  static final DbProvider db = DbProvider._();
+  static final LocalDatabaseHelper db = LocalDatabaseHelper._();
 
   // For test purpose.
   Future<void> deleteDb() async {
@@ -83,7 +44,7 @@ class DbProvider {
         initialScripts.forEach((script) async => await db.execute(script));
 
         await db.rawInsert(
-            "INSERT Into $orderHeadTable ($orderID,$payType,$total,$date)"
+            "INSERT Into ${DatabaseConstants.orderHeadTable} (${DatabaseConstants.orderID},${DatabaseConstants.payType},${DatabaseConstants.total},${DatabaseConstants.date})"
             " VALUES (?,?,?,?)",
             [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
 
