@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:invoice_manage/model/memo.dart';
 import 'package:invoice_manage/providers/memo_provider.dart';
-import 'package:invoice_manage/utils/SortAlphaNum.dart';
+import 'package:invoice_manage/utils/sort_alpha_num.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MemoBloc {
