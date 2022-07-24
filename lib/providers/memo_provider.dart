@@ -1,7 +1,7 @@
 import 'package:invoice_manage/model/memo.dart';
 
 import '../core/constants/database_constants.dart';
-import '../core/local_database_helper.dart';
+import '../core/localdatabase/local_database_helper.dart';
 
 class MemoDbProvider {
   MemoDbProvider._();

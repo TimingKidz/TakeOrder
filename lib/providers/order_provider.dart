@@ -1,8 +1,8 @@
+import 'package:invoice_manage/core/localdatabase/local_database_helper.dart';
 import 'package:invoice_manage/model/OrderItem.dart';
 import 'package:invoice_manage/model/SummaryData.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/model/orderList.dart';
-import 'package:invoice_manage/core/local_database_helper.dart';
 
 import '../core/constants/database_constants.dart';
 
@@ -23,7 +23,7 @@ class OrderDbProvider {
       FROM ${DatabaseConstants.orderHeadTable}
     ''');
     List<Order> list =
-        res.isNotEmpty ? res.map((c) => Order.fromMap(c)).toList() : [];
+    res.isNotEmpty ? res.map((c) => Order.fromMap(c)).toList() : [];
 
     // OrderList Insert
     res = await db.rawQuery('''
@@ -91,7 +91,7 @@ class OrderDbProvider {
     // Insert new OrderHead
     await db.rawInsert(
         "INSERT Into ${DatabaseConstants.orderHeadTable} (${DatabaseConstants.orderID},${DatabaseConstants.payType},${DatabaseConstants.total},${DatabaseConstants.date})"
-        " VALUES (?,?,?,?)",
+            " VALUES (?,?,?,?)",
         [id, "Cash Sale", 0, DateTime.now().toIso8601String()]);
   }
 
@@ -112,7 +112,7 @@ class OrderDbProvider {
     await db.delete(DatabaseConstants.orderHeadTable);
     await db.rawInsert(
         "INSERT Into ${DatabaseConstants.orderHeadTable} (${DatabaseConstants.orderID},${DatabaseConstants.payType},${DatabaseConstants.total},${DatabaseConstants.date})"
-        " VALUES (?,?,?,?)",
+            " VALUES (?,?,?,?)",
         [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
   }
 
@@ -126,7 +126,7 @@ class OrderDbProvider {
 
     await db.rawInsert(
         "INSERT Into ${DatabaseConstants.orderListTable} (${DatabaseConstants.orderID},${DatabaseConstants.itemID},${DatabaseConstants.listPrice},${DatabaseConstants.qty})"
-        " VALUES (?,?,?,?)",
+            " VALUES (?,?,?,?)",
         [newItem.orderID, newItem.itemID, newItem.listPrice, newItem.qty]);
 
     return lPrice * qty;

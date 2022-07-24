@@ -1,5 +1,4 @@
-import '../core/constants/database_constants.dart';
-import '../core/local_database_helper.dart';
+import '../../constants/database_constants.dart';
 
 class DatabaseInitialScript {
   static final initialScripts = [

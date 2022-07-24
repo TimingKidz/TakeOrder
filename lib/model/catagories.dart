@@ -1,5 +1,3 @@
-import 'package:invoice_manage/core/local_database_helper.dart';
-
 import '../core/constants/database_constants.dart';
 
 class Categories {

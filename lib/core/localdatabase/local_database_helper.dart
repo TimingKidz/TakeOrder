@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:invoice_manage/providers/DatabaseInitialScripts.dart';
-import 'package:invoice_manage/providers/DatabaseMigrationScripts.dart';
+import 'package:invoice_manage/core/localdatabase/scripts/local_database_initial_scripts.dart';
+import 'package:invoice_manage/core/localdatabase/scripts/local_database_migration_scripts.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'constants/database_constants.dart';
+import '../constants/database_constants.dart';
 
 class LocalDatabaseHelper {
   static final initialScripts = DatabaseInitialScript.initialScripts;

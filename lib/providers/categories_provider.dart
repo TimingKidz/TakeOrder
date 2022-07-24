@@ -1,7 +1,7 @@
 import 'package:invoice_manage/core/constants/database_constants.dart';
 import 'package:invoice_manage/model/catagories.dart';
 
-import '../core/local_database_helper.dart';
+import '../core/localdatabase/local_database_helper.dart';
 
 class CateDbProvider {
   CateDbProvider._();
