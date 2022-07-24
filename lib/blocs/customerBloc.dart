@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomerBloc {
@@ -21,7 +21,7 @@ class CustomerBloc {
 
   getCustomer() async {
     if (prefs == null) prefs = await SharedPreferences.getInstance();
-    contacts = await ContactsService.getContacts(withThumbnails: false);
+    contacts = await FlutterContacts.getContacts();
     _customerController.sink.add(contacts);
     String f = prefs?.getString("cusCate") ?? "All";
     dropdownValue = f;
@@ -30,12 +30,11 @@ class CustomerBloc {
   Future<void> searchFilter(String s) async {
     if (s.isNotEmpty) {
       List<Contact> filter = contacts.where((cus) {
-        var displayName = cus.displayName?.toLowerCase() ?? "";
+        var displayName = cus.displayName.toLowerCase();
         return displayName.contains(s);
       }).toList();
       filter.sort((a, b) =>
-          a.displayName?.indexOf(s).compareTo(b.displayName?.indexOf(s) ?? 0) ??
-          0);
+          a.displayName.indexOf(s).compareTo(b.displayName.indexOf(s)));
       _customerController.sink.add(filter);
     } else {
       _customerController.sink.add(contacts);
