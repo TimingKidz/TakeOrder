@@ -464,9 +464,6 @@ class _OrderPageState extends State<OrderPage> {
                         await file.copy('$databasePath/database.db');
                         await LocalDatabaseHelper.db.database;
                         await orderBloc.getOrders();
-                        // Navigator.of(context).pop();
-                        // await importInformationDialog();
-                        // SystemNavigator.pop();
                       }
                     },
                   ),
@@ -475,13 +472,6 @@ class _OrderPageState extends State<OrderPage> {
             ),
           );
         });
-  }
-
-  Future<void> importInformationDialog() async {
-    await showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-            InformationDialog(content: "Please re-open application."));
   }
 
   Future<bool> _askPermissions() async {
