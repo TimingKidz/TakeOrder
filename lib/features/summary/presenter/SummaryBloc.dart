@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:invoice_manage/model/OrderItem.dart';
+import 'package:invoice_manage/model/order_item.dart';
 import 'package:invoice_manage/providers/order_provider.dart';
 
 class SummaryBloc {

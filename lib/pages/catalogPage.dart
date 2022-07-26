@@ -10,9 +10,9 @@ import 'package:invoice_manage/model/item.dart';
 import 'package:invoice_manage/utils/double_extensions.dart';
 import 'package:invoice_manage/widget/addItem_dialog.dart';
 import 'package:invoice_manage/widget/catalogedit_dialog.dart';
+import 'package:invoice_manage/widget/dialog.dart';
 import 'package:invoice_manage/widget/qty_dialog.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
-import 'package:invoice_manage/widget/yesno_dialog.dart';
 
 class CatalogPage extends StatefulWidget {
   final OrderBloc orderBloc;

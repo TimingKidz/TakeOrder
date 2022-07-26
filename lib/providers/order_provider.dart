@@ -1,10 +1,10 @@
 import 'package:invoice_manage/core/localdatabase/local_database_helper.dart';
-import 'package:invoice_manage/model/OrderItem.dart';
-import 'package:invoice_manage/model/SummaryData.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/model/orderList.dart';
+import 'package:invoice_manage/model/order_item.dart';
 
 import '../core/constants/database_constants.dart';
+import '../features/summary/domain/entities/summary.dart';
 
 class OrderDbProvider {
   OrderDbProvider._();
@@ -49,7 +49,7 @@ class OrderDbProvider {
     return list;
   }
 
-  Future<SummaryData> getSummary() async {
+  Future<Summary> getSummary() async {
     final db = await LocalDatabaseHelper.db.database;
     var itemTotal = await db.rawQuery("""
       SELECT SUM(${DatabaseConstants.qty}) as qty, ${DatabaseConstants.catalogTable}.${DatabaseConstants.itemName}, SUM(${DatabaseConstants.listPrice} * ${DatabaseConstants.qty}) as SubTotal
@@ -73,10 +73,10 @@ class OrderDbProvider {
     });
 
     List<OrderItem> allItems = itemTotal
-        .map((Map<String, Object?> object) => OrderItem.fromMap(object))
+        .map((Map<String, Object?> object) => OrderItem.fromJson(object))
         .toList();
 
-    return SummaryData(
+    return Summary(
         orderItemList: allItems,
         totals: double.parse(total.first["Total"].toString()),
         payTypeTotalMap: payTypeTotalMap);

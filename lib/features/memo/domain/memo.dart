@@ -1,6 +1,5 @@
-import 'package:invoice_manage/model/memoList.dart';
-
-import '../core/constants/database_constants.dart';
+import '../../../core/constants/database_constants.dart';
+import 'memoList.dart';
 
 class Memo {
   int? memoID;

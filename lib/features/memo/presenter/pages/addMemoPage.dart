@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_manage/blocs/categoriesBloc.dart';
 import 'package:invoice_manage/blocs/memoBloc.dart';
-import 'package:invoice_manage/model/memo.dart';
+import 'package:invoice_manage/features/memo/domain/memo.dart';
 
 class AddMemo extends StatefulWidget {
   final MemoBloc memoBloc;

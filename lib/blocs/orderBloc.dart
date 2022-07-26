@@ -1,15 +1,16 @@
 import 'dart:async';
 
 import 'package:intl/intl.dart';
-import 'package:invoice_manage/model/OrderItem.dart';
-import 'package:invoice_manage/model/SummaryData.dart';
+import 'package:invoice_manage/features/memo/domain/memo.dart';
 import 'package:invoice_manage/model/item.dart';
-import 'package:invoice_manage/model/memo.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/model/orderList.dart';
+import 'package:invoice_manage/model/order_item.dart';
 import 'package:invoice_manage/providers/memo_provider.dart';
 import 'package:invoice_manage/providers/order_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../features/summary/domain/entities/summary.dart';
 
 class OrderBloc {
   OrderBloc() {
@@ -188,7 +189,7 @@ class OrderBloc {
   }
 
   Future<void> _exportSummary() async {
-    SummaryData info = await OrderDbProvider.db.getSummary();
+    Summary info = await OrderDbProvider.db.getSummary();
     String title = "SALES SUMMARY FOR ${dateFormat(DateTime.now())}\n";
     String order = "";
     info.orderItemList.forEach((OrderItem each) {

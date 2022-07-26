@@ -10,9 +10,7 @@ class YesNoDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(title),
       actionsPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       actions: <Widget>[
         MaterialButton(
           onPressed: () => Navigator.pop(context, 'Yes'),
@@ -24,6 +22,30 @@ class YesNoDialog extends StatelessWidget {
         MaterialButton(
           onPressed: () => Navigator.pop(context, 'Cancel'),
           child: Text("Cancel"),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+              side: BorderSide(width: 1.5)),
+        ),
+      ],
+    );
+  }
+}
+
+class InformationDialog extends StatelessWidget {
+  final String content;
+
+  const InformationDialog({Key? key, required this.content}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: Text(content),
+      actionsPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      actions: <Widget>[
+        MaterialButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text("OK"),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
               side: BorderSide(width: 1.5)),

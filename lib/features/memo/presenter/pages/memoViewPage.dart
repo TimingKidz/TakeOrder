@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_manage/blocs/EachMemoBloc.dart';
 import 'package:invoice_manage/blocs/categoriesBloc.dart';
-import 'package:invoice_manage/model/memo.dart';
-import 'package:invoice_manage/widget/yesno_dialog.dart';
+import 'package:invoice_manage/features/memo/domain/memo.dart';
+import 'package:invoice_manage/widget/dialog.dart';
 
 class MemoViewPage extends StatefulWidget {
   final CategoriesBloc cateBloc;

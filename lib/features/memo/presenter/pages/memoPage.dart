@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_manage/blocs/categoriesBloc.dart';
 import 'package:invoice_manage/blocs/memoBloc.dart';
+import 'package:invoice_manage/features/memo/domain/memo.dart';
+import 'package:invoice_manage/features/memo/presenter/pages/addMemoPage.dart';
+import 'package:invoice_manage/features/memo/presenter/pages/memoViewPage.dart';
 import 'package:invoice_manage/model/catagories.dart';
-import 'package:invoice_manage/model/memo.dart';
-import 'package:invoice_manage/pages/addMemoPage.dart';
 import 'package:invoice_manage/pages/categoriesPage.dart';
-import 'package:invoice_manage/pages/memoViewPage.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
 
 class MemoPage extends StatefulWidget {

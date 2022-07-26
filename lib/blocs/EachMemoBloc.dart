@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:invoice_manage/model/memo.dart';
+import 'package:invoice_manage/features/memo/domain/memo.dart';
 import 'package:invoice_manage/providers/memo_provider.dart';
 
 class EachMemoBloc {

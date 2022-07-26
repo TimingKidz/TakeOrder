@@ -1,4 +1,4 @@
-import 'package:invoice_manage/model/memo.dart';
+import 'package:invoice_manage/features/memo/domain/memo.dart';
 
 import '../core/constants/database_constants.dart';
 import '../core/localdatabase/local_database_helper.dart';
