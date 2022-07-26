@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_manage/blocs/orderBloc.dart';
+import 'package:invoice_manage/core/localdatabase/local_database_helper.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/pages/catalogPage.dart';
 import 'package:invoice_manage/pages/selectCustomerPage.dart';
@@ -14,7 +13,7 @@ import 'package:invoice_manage/widget/dialog.dart';
 import 'package:invoice_manage/widget/exports_dialog.dart';
 import 'package:invoice_manage/widget/orderList_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -29,11 +28,6 @@ class _OrderPageState extends State<OrderPage> {
   final orderBloc = OrderBloc();
   bool isSwipeRight = false;
   bool isSwipeLeft = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -441,7 +435,6 @@ class _OrderPageState extends State<OrderPage> {
                       Share.shareFiles(
                         ['$databasePath/database.db'],
                         subject: 'Database',
-                        // sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size
                       );
                       Navigator.of(context).pop();
                     },
@@ -460,17 +453,21 @@ class _OrderPageState extends State<OrderPage> {
                       ],
                     ),
                     onTap: () async {
+                      Navigator.of(context).pop();
+
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles();
 
                       if (result != null) {
                         File file = File(result.files.single.path ?? "");
-                        file.copy('$databasePath/database.db');
-                        Navigator.of(context).pop();
-                        await importInformationDialog();
-                        SystemNavigator.pop();
+                        await LocalDatabaseHelper.db.closeDb();
+                        await file.copy('$databasePath/database.db');
+                        await LocalDatabaseHelper.db.database;
+                        await orderBloc.getOrders();
+                        // Navigator.of(context).pop();
+                        // await importInformationDialog();
+                        // SystemNavigator.pop();
                       }
-                      Navigator.of(context).pop();
                     },
                   ),
                 )

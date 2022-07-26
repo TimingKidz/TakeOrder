@@ -24,6 +24,12 @@ class LocalDatabaseHelper {
     await deleteDatabase(path);
   }
 
+  Future<void> closeDb() async {
+    final db = await database;
+    _database = null;
+    await db.close();
+  }
+
   static Database? _database;
 
   Future<Database> get database async {
