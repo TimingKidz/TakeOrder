@@ -7,9 +7,11 @@ import '../../../model/order_item.dart';
 
 final summaryPageProvider = Provider<SummaryPage>((ref) => SummaryPage());
 
-final allSummaryProvider = StateProvider<Summary>((ref) => Summary());
+final allSummaryProvider =
+    StateProvider<Summary>((ref) => Summary(), name: "All Summary");
 
-final summaryDisplayProvider = StateProvider<Summary>((ref) => Summary());
+final summaryDisplayProvider =
+    StateProvider<Summary>((ref) => Summary(), name: "Summary on UI");
 
 final getSummaryProvider = FutureProvider<void>((ref) async {
   final summary = ref.watch(allSummaryProvider.notifier);
@@ -20,7 +22,7 @@ final getSummaryProvider = FutureProvider<void>((ref) async {
 
   summary.state = result;
   summaryState.state = result;
-});
+}, name: "Get Summary");
 
 final searchFilterProvider =
     Provider.autoDispose.family<Summary, String>((ref, keyword) {

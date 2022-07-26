@@ -9,4 +9,5 @@ final pageRoute = Provider((ref) {
   return [MemoPage(), summaryPage, OrderPage()];
 });
 
-final currentPageProvider = StateProvider<int>((ref) => 2);
+final currentPageProvider =
+    StateProvider<int>((ref) => 2, name: "Landing Page");
