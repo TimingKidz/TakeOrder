@@ -1,0 +1,1 @@
+enum OrderPageAction { NEXT, PREVIOUS }

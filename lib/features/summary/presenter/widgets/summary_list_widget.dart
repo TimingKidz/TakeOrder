@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:invoice_manage/features/order/domain/entities/order_item.dart';
 import 'package:invoice_manage/features/summary/presenter/summary_provider.dart';
-import 'package:invoice_manage/model/order_item.dart';
 
 import '../../../../core/constants/spacing_constants.dart';
 

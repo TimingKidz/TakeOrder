@@ -1,4 +1,4 @@
-import 'package:invoice_manage/model/order_item.dart';
+import 'package:invoice_manage/features/order/domain/entities/order_item.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'summary.g.dart';

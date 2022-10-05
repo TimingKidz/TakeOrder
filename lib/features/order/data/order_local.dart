@@ -1,17 +1,11 @@
-import 'package:invoice_manage/core/localdatabase/local_database_helper.dart';
-import 'package:invoice_manage/model/order.dart';
-import 'package:invoice_manage/model/orderList.dart';
-import 'package:invoice_manage/model/order_item.dart';
+import 'package:invoice_manage/features/order/data/model/order_model.dart';
 
-import '../core/constants/database_constants.dart';
-import '../features/summary/domain/entities/summary.dart';
+import '../../../core/constants/database_constants.dart';
+import '../../../core/localdatabase/local_database_helper.dart';
+import '../domain/entities/order_list.dart';
 
-class OrderDbProvider {
-  OrderDbProvider._();
-
-  static final OrderDbProvider db = OrderDbProvider._();
-
-  Future<List<Order>> getAllOrders() async {
+class OrderLocal {
+  Future<List<OrderModel>> getAllOrders() async {
     // OrderHead Insert
     final db = await LocalDatabaseHelper.db.database;
     var res = await db.rawQuery('''
@@ -22,8 +16,14 @@ class OrderDbProvider {
       ${DatabaseConstants.date}
       FROM ${DatabaseConstants.orderHeadTable}
     ''');
-    List<Order> list =
-    res.isNotEmpty ? res.map((c) => Order.fromMap(c)).toList() : [];
+    List<OrderModel> list = res.isNotEmpty
+        ? res.map((c) {
+            print(c);
+            return OrderModel.fromJson(c);
+          }).toList()
+        : [];
+
+    print("Total: ${list.first.total}");
 
     // OrderList Insert
     res = await db.rawQuery('''
@@ -41,45 +41,16 @@ class OrderDbProvider {
 
     if (res.isNotEmpty) {
       res.forEach((element) {
-        OrderList t = OrderList.fromMap(element);
-        list.firstWhere((o) => o.orderID == t.orderID).list.add(t);
+        OrderList t = OrderList.fromJson(element);
+        if (list.firstWhere((o) => o.orderID == t.orderID).list == null) {
+          list.firstWhere((o) => o.orderID == t.orderID).list = [t];
+        } else {
+          list.firstWhere((o) => o.orderID == t.orderID).list?.add(t);
+        }
       });
     }
 
     return list;
-  }
-
-  Future<Summary> getSummary() async {
-    final db = await LocalDatabaseHelper.db.database;
-    var itemTotal = await db.rawQuery("""
-      SELECT SUM(${DatabaseConstants.qty}) as qty, ${DatabaseConstants.catalogTable}.${DatabaseConstants.itemName}, SUM(${DatabaseConstants.listPrice} * ${DatabaseConstants.qty}) as SubTotal
-      FROM ${DatabaseConstants.orderListTable}
-      JOIN ${DatabaseConstants.catalogTable} ON ${DatabaseConstants.orderListTable}.${DatabaseConstants.itemID} == ${DatabaseConstants.catalogTable}.${DatabaseConstants.itemID}
-      GROUP BY ${DatabaseConstants.orderListTable}.${DatabaseConstants.itemID}
-    """);
-    var total = await db.rawQuery("""
-      SELECT SUM(${DatabaseConstants.total}) as Total
-      FROM ${DatabaseConstants.orderHeadTable}
-    """);
-    var payTypeTotal = await db.rawQuery("""
-      SELECT ${DatabaseConstants.payType}, SUM(${DatabaseConstants.total}) as TypeTotal
-      FROM ${DatabaseConstants.orderHeadTable}
-      GROUP BY ${DatabaseConstants.payType}
-    """);
-
-    Map<String, dynamic> payTypeTotalMap = {};
-    payTypeTotal.forEach((Map<String, dynamic> each) {
-      payTypeTotalMap.addAll({each["payType"]: each["TypeTotal"]});
-    });
-
-    List<OrderItem> allItems = itemTotal
-        .map((Map<String, Object?> object) => OrderItem.fromJson(object))
-        .toList();
-
-    return Summary(
-        orderItemList: allItems,
-        totals: double.parse(total.first["Total"].toString()),
-        payTypeTotalMap: payTypeTotalMap);
   }
 
   Future<void> addOrderHead() async {
@@ -91,7 +62,7 @@ class OrderDbProvider {
     // Insert new OrderHead
     await db.rawInsert(
         "INSERT Into ${DatabaseConstants.orderHeadTable} (${DatabaseConstants.orderID},${DatabaseConstants.payType},${DatabaseConstants.total},${DatabaseConstants.date})"
-            " VALUES (?,?,?,?)",
+        " VALUES (?,?,?,?)",
         [id, "Cash Sale", 0, DateTime.now().toIso8601String()]);
   }
 
@@ -112,7 +83,7 @@ class OrderDbProvider {
     await db.delete(DatabaseConstants.orderHeadTable);
     await db.rawInsert(
         "INSERT Into ${DatabaseConstants.orderHeadTable} (${DatabaseConstants.orderID},${DatabaseConstants.payType},${DatabaseConstants.total},${DatabaseConstants.date})"
-            " VALUES (?,?,?,?)",
+        " VALUES (?,?,?,?)",
         [0, "Cash Sale", 0, DateTime.now().toIso8601String()]);
   }
 
@@ -126,7 +97,7 @@ class OrderDbProvider {
 
     await db.rawInsert(
         "INSERT Into ${DatabaseConstants.orderListTable} (${DatabaseConstants.orderID},${DatabaseConstants.itemID},${DatabaseConstants.listPrice},${DatabaseConstants.qty})"
-            " VALUES (?,?,?,?)",
+        " VALUES (?,?,?,?)",
         [newItem.orderID, newItem.itemID, newItem.listPrice, newItem.qty]);
 
     return lPrice * qty;

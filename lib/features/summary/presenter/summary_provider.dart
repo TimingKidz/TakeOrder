@@ -3,7 +3,7 @@ import 'package:invoice_manage/features/summary/data/summary_local_provider.dart
 import 'package:invoice_manage/features/summary/domain/entities/summary.dart';
 import 'package:invoice_manage/features/summary/presenter/pages/summary_page.dart';
 
-import '../../../model/order_item.dart';
+import '../../order/domain/entities/order_item.dart';
 
 final summaryPageProvider = Provider<SummaryPage>((ref) => SummaryPage());
 

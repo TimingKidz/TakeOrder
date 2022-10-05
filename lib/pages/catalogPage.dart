@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_manage/blocs/catalogBloc.dart';
-import 'package:invoice_manage/blocs/orderBloc.dart';
 import 'package:invoice_manage/model/item.dart';
 import 'package:invoice_manage/utils/double_extensions.dart';
 import 'package:invoice_manage/widget/addItem_dialog.dart';
@@ -15,9 +14,8 @@ import 'package:invoice_manage/widget/qty_dialog.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
 
 class CatalogPage extends StatefulWidget {
-  final OrderBloc orderBloc;
 
-  const CatalogPage({Key? key, required this.orderBloc}) : super(key: key);
+  const CatalogPage({Key? key}) : super(key: key);
 
   @override
   _CatalogPageState createState() => _CatalogPageState();
@@ -385,9 +383,9 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   Future<void> addItemToOrder() async {
-    await widget.orderBloc
-        .addAllToOrder(catalogBloc.selectedItem, catalogBloc.qty);
-    catalogBloc.clearSelectedItems();
+    // await widget.orderBloc
+    //     .addAllToOrder(catalogBloc.selectedItem, catalogBloc.qty);
+    // catalogBloc.clearSelectedItems();
   }
 
   Future<void> addItem() async {
