@@ -5,7 +5,7 @@ import 'package:invoice_manage/blocs/SummaryBloc.dart';
 import 'package:invoice_manage/pages/SummaryPage.dart';
 import 'package:invoice_manage/pages/memoPage.dart';
 import 'package:invoice_manage/pages/orderPage.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 import 'blocs/memoBloc.dart';
 import 'blocs/orderBloc.dart';
@@ -61,7 +61,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   PersistentTabController _controller =
       PersistentTabController(initialIndex: 2);
-  int _currentPage = 2;
 
   final List<Widget> pageRoute = [MemoPage(), SummaryPage(), OrderPage()];
 
@@ -93,14 +92,10 @@ class _MyHomePageState extends State<MyHomePage> {
         )
       ],
       navBarStyle: NavBarStyle.style3,
+      popAllScreensOnTapOfSelectedTab: false,
+      onWillPop: (context) async {
+        return false;
+      },
     );
-  }
-
-  Color selectColor() {
-    if (_currentPage == 0) return Colors.orange;
-    if (_currentPage == 1)
-      return Colors.green;
-    else
-      return Colors.blue;
   }
 }

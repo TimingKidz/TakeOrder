@@ -37,7 +37,7 @@ dependencies:
   file_picker: ^4.3.0
   contacts_service: ^0.6.3
   permission_handler: ^8.1.6
-  persistent_bottom_nav_bar: ^5.0.2
+  persistent_bottom_nav_bar_v2: ^4.2.6
 
 flutter_icons:
   ios: true
