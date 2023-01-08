@@ -38,100 +38,88 @@ class _MemoViewPageState extends State<MemoViewPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Memo _memo = snapshot.data!;
-            return WillPopScope(
-              onWillPop: () async {
-                if(content.text.isEmpty) {
-                  await _eachMemoBloc.delete(_memo);
-                  Navigator.pop(context, true);
-                }else{
-                  Navigator.pop(context, false);
-                }
-                _eachMemoBloc.dispose();
-                return false;
-              },
-              child: Scaffold(
-                floatingActionButton: FloatingActionButton(
-                  backgroundColor: Colors.orange,
-                  onPressed: () async {
-                    if (content.text == _eachMemoBloc.fMemo.memoContent &&
-                        _eachMemoBloc.fMemoEdited == null) {
-                      Navigator.pop(context, false);
-                    }else if(content.text.isEmpty){
-                      await _eachMemoBloc.delete(_memo);
-                      Navigator.pop(context, true);
-                    }else{
-                      _eachMemoBloc.setMemoContent(content.text);
-                      await _eachMemoBloc.update();
-                      Navigator.pop(context, true);
-                    }
-                    _eachMemoBloc.dispose();
-                  },
-                  child: Icon(Icons.check),
-                ),
-                appBar: AppBar(
-                  actions: [
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 16.0, right: 8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: Offset(0.0, 0.0), //(x,y)
-                            ),
-                          ],
-                        ),
-                        child: DropdownButton<String>(
-                          value: _memo.memoCateName ?? "None",
-                          icon: const Icon(Icons.arrow_drop_down),
-                          iconSize: 24,
-                          elevation: 16,
-                          underline: Container(
-                            height: 2,
-                            // color: Colors.deepPurpleAccent,
+            return Scaffold(
+              floatingActionButton: FloatingActionButton(
+                backgroundColor: Colors.orange,
+                onPressed: () async {
+                  if (content.text == _eachMemoBloc.fMemo.memoContent &&
+                      _eachMemoBloc.fMemoEdited == null) {
+                    Navigator.pop(context, false);
+                  } else if (content.text.isEmpty) {
+                    await _eachMemoBloc.delete(_memo);
+                    Navigator.pop(context, true);
+                  } else {
+                    _eachMemoBloc.setMemoContent(content.text);
+                    await _eachMemoBloc.update();
+                    Navigator.pop(context, true);
+                  }
+                  _eachMemoBloc.dispose();
+                },
+                child: Icon(Icons.check),
+              ),
+              appBar: AppBar(
+                actions: [
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 16.0, right: 8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(0.0, 0.0), //(x,y)
                           ),
-                          onChanged: (String? newValue) {
-                            int? cateID = newValue == "None"
-                                ? null
-                                : widget.cateBloc.all
-                                .firstWhere((element) =>
-                            element.cateName == newValue)
-                                .cateID;
-                            _eachMemoBloc.setMemoCategory(newValue!, cateID!);
-                          },
-                          items: <DropdownMenuItem<String>>[
-                            DropdownMenuItem<String>(
-                              value: "None",
-                              child: Text("None"),
-                            ),
-                            for (DropdownMenuItem<String> c in allCate) c,
-                          ],
+                        ],
+                      ),
+                      child: DropdownButton<String>(
+                        value: _memo.memoCateName ?? "None",
+                        icon: const Icon(Icons.arrow_drop_down),
+                        iconSize: 24,
+                        elevation: 16,
+                        underline: Container(
+                          height: 2,
+                          // color: Colors.deepPurpleAccent,
                         ),
+                        onChanged: (String? newValue) {
+                          int? cateID = newValue == "None"
+                              ? null
+                              : widget.cateBloc.all
+                                  .firstWhere(
+                                      (element) => element.cateName == newValue)
+                                  .cateID;
+                          _eachMemoBloc.setMemoCategory(newValue!, cateID!);
+                        },
+                        items: <DropdownMenuItem<String>>[
+                          DropdownMenuItem<String>(
+                            value: "None",
+                            child: Text("None"),
+                          ),
+                          for (DropdownMenuItem<String> c in allCate) c,
+                        ],
                       ),
                     ),
-                    IconButton(
-                      onPressed: () => deleteMemo(temp),
-                      icon: Icon(Icons.delete),
-                      tooltip: "Delete",
-                    ),
-                  ],
-                ),
-                body: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    expands: true,
-                    controller: content,
-                    style: Theme.of(context).textTheme.headline6,
-                    decoration: InputDecoration.collapsed(
-                      hintText: "Content ...",
-                    ),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
                   ),
+                  IconButton(
+                    onPressed: () => deleteMemo(temp),
+                    icon: Icon(Icons.delete),
+                    tooltip: "Delete",
+                  ),
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  expands: true,
+                  controller: content,
+                  style: Theme.of(context).textTheme.headline6,
+                  decoration: InputDecoration.collapsed(
+                    hintText: "Content ...",
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
                 ),
               ),
             );

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:intl/intl.dart';
+import 'package:invoice_manage/main.dart';
 import 'package:invoice_manage/model/OrderItem.dart';
 import 'package:invoice_manage/model/SummaryData.dart';
 import 'package:invoice_manage/model/item.dart';
@@ -46,6 +47,7 @@ class OrderBloc {
     _orderController.sink.add(all.elementAt(pageNum - 1));
     _orderListController.sink.add(all.elementAt(pageNum - 1).list);
     _orderNumController.sink.add(pageNum);
+    await summaryBloc.getSummary();
   }
 
   // Order findOrder(int id) {
@@ -184,7 +186,8 @@ class OrderBloc {
         );
         await MemoDbProvider.db.newMemo(m); // Each order memo
       }
-    }).then((_) => {if (justSummary) _exportSummary()});
+    }).then((_) async =>
+        {if (justSummary) _exportSummary(), await memoBloc.getMemo()});
   }
 
   Future<void> _exportSummary() async {
@@ -205,6 +208,7 @@ class OrderBloc {
       memoContent: content,
     );
     await MemoDbProvider.db.newMemo(m); // Summary memo
+    await memoBloc.getMemo();
   }
 
   String dateFormat(DateTime date) {

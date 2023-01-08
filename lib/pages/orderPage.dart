@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:invoice_manage/blocs/orderBloc.dart';
 import 'package:invoice_manage/model/order.dart';
 import 'package:invoice_manage/pages/catalogPage.dart';
 import 'package:invoice_manage/pages/selectCustomerPage.dart';
@@ -19,6 +18,9 @@ import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../blocs/orderBloc.dart';
+import '../main.dart';
+
 class OrderPage extends StatefulWidget {
   const OrderPage({Key? key}) : super(key: key);
 
@@ -27,13 +29,13 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage> {
-  final orderBloc = OrderBloc();
   bool isSwipeRight = false;
   bool isSwipeLeft = false;
 
   @override
   void initState() {
     super.initState();
+    orderBloc = OrderBloc();
   }
 
   @override

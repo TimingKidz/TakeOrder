@@ -8,6 +8,8 @@ import 'package:invoice_manage/pages/categoriesPage.dart';
 import 'package:invoice_manage/pages/memoViewPage.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
 
+import '../main.dart';
+
 class MemoPage extends StatefulWidget {
   const MemoPage({Key? key}) : super(key: key);
 
@@ -16,13 +18,13 @@ class MemoPage extends StatefulWidget {
 }
 
 class _MemoPageState extends State<MemoPage> {
-  final memoBloc = MemoBloc();
   final cateBloc = CategoriesBloc();
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    memoBloc = MemoBloc();
     _scrollController.addListener(() {
       memoBloc.isShowKeyboardToggle(false);
     });
@@ -154,7 +156,7 @@ class _MemoPageState extends State<MemoPage> {
                                         cateBloc: cateBloc,
                                         memo: snapshot.data![index])),
                               ).then((value) {
-                                if (value) {
+                                if (value != null && value) {
                                   memoBloc.getMemo();
                                 }
                               });
