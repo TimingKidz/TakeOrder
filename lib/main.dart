@@ -10,9 +10,9 @@ import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'blocs/memoBloc.dart';
 import 'blocs/orderBloc.dart';
 
-final memoBloc = MemoBloc();
+var memoBloc = MemoBloc();
 var summaryBloc = SummaryBloc();
-final orderBloc = OrderBloc();
+var orderBloc = OrderBloc();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

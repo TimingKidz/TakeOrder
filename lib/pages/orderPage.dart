@@ -18,6 +18,7 @@ import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../blocs/orderBloc.dart';
 import '../main.dart';
 
 class OrderPage extends StatefulWidget {
@@ -34,6 +35,7 @@ class _OrderPageState extends State<OrderPage> {
   @override
   void initState() {
     super.initState();
+    orderBloc = OrderBloc();
   }
 
   @override

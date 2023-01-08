@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_manage/blocs/categoriesBloc.dart';
+import 'package:invoice_manage/blocs/memoBloc.dart';
 import 'package:invoice_manage/model/catagories.dart';
 import 'package:invoice_manage/model/memo.dart';
 import 'package:invoice_manage/pages/addMemoPage.dart';
@@ -23,6 +24,7 @@ class _MemoPageState extends State<MemoPage> {
   @override
   void initState() {
     super.initState();
+    memoBloc = MemoBloc();
     _scrollController.addListener(() {
       memoBloc.isShowKeyboardToggle(false);
     });
