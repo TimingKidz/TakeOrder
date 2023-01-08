@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_manage/blocs/categoriesBloc.dart';
-import 'package:invoice_manage/blocs/memoBloc.dart';
 import 'package:invoice_manage/model/catagories.dart';
 import 'package:invoice_manage/model/memo.dart';
 import 'package:invoice_manage/pages/addMemoPage.dart';
 import 'package:invoice_manage/pages/categoriesPage.dart';
 import 'package:invoice_manage/pages/memoViewPage.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
+
+import '../main.dart';
 
 class MemoPage extends StatefulWidget {
   const MemoPage({Key? key}) : super(key: key);
@@ -16,7 +17,6 @@ class MemoPage extends StatefulWidget {
 }
 
 class _MemoPageState extends State<MemoPage> {
-  final memoBloc = MemoBloc();
   final cateBloc = CategoriesBloc();
   final ScrollController _scrollController = ScrollController();
 

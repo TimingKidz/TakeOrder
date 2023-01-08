@@ -1,13 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:invoice_manage/blocs/SummaryBloc.dart';
 import 'package:invoice_manage/pages/SummaryPage.dart';
 import 'package:invoice_manage/pages/memoPage.dart';
 import 'package:invoice_manage/pages/orderPage.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
+import 'blocs/memoBloc.dart';
+import 'blocs/orderBloc.dart';
+
+final memoBloc = MemoBloc();
+var summaryBloc = SummaryBloc();
+final orderBloc = OrderBloc();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle.dark.copyWith(
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
     // statusBarColor is used to set Status bar color in Android devices.
     statusBarColor: Colors.transparent,
 
@@ -21,9 +30,7 @@ void main() {
     // systemNavigationBarColor: Color(0xfffafafa),
     // systemNavigationBarIconBrightness: Brightness.dark
   ));
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp
-  ]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MyApp());
 }
 
@@ -52,38 +59,44 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  PersistentTabController _controller =
+      PersistentTabController(initialIndex: 2);
   int _currentPage = 2;
 
   final List<Widget> pageRoute = [MemoPage(), SummaryPage(), OrderPage()];
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentPage,
-          selectedItemColor: selectColor(),
-          onTap: (cur) {
-            setState(() {
-              _currentPage = cur;
-            });
-          },
-          selectedFontSize: 12.0,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.note), label: "Memo"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.insert_chart), label: "Summary"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.sticky_note_2), label: "Order"),
-          ],
+    return PersistentTabView(
+      context,
+      controller: _controller,
+      screens: pageRoute,
+      backgroundColor: Color(0xFFFAFAFA),
+      items: [
+        PersistentBottomNavBarItem(
+          icon: Icon(Icons.note),
+          title: "Memo",
+          activeColorPrimary: Colors.orange,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
         ),
-        body: pageRoute[_currentPage],
-      ),
+        PersistentBottomNavBarItem(
+          icon: Icon(Icons.insert_chart),
+          title: "Summary",
+          activeColorPrimary: Colors.green,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
+        ),
+        PersistentBottomNavBarItem(
+          icon: Icon(Icons.sticky_note_2),
+          title: "Order",
+          activeColorPrimary: Colors.blue,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
+        )
+      ],
+      navBarStyle: NavBarStyle.style3,
     );
   }
 
-  Color selectColor(){
+  Color selectColor() {
     if (_currentPage == 0) return Colors.orange;
     if (_currentPage == 1)
       return Colors.green;

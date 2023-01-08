@@ -4,6 +4,8 @@ import 'package:invoice_manage/blocs/SummaryBloc.dart';
 import 'package:invoice_manage/widget/SummaryListWidget.dart';
 import 'package:invoice_manage/widget/searchbar.dart';
 
+import '../main.dart';
+
 class SummaryPage extends StatefulWidget {
   const SummaryPage({Key? key}) : super(key: key);
 
@@ -12,7 +14,11 @@ class SummaryPage extends StatefulWidget {
 }
 
 class _SummaryPageState extends State<SummaryPage> {
-  final summaryBloc = SummaryBloc();
+  @override
+  void initState() {
+    super.initState();
+    summaryBloc = SummaryBloc();
+  }
 
   @override
   Widget build(BuildContext context) {
