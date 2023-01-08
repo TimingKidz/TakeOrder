@@ -153,7 +153,11 @@ class _MemoPageState extends State<MemoPage> {
                                     builder: (context) => MemoViewPage(
                                         cateBloc: cateBloc,
                                         memo: snapshot.data![index])),
-                              );
+                              ).then((value) {
+                                if (value != null && value) {
+                                  memoBloc.getMemo();
+                                }
+                              });
                             },
                           );
                         },
