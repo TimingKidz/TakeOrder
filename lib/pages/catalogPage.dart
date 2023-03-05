@@ -29,7 +29,6 @@ class _CatalogPageState extends State<CatalogPage> {
   var itemPrice = TextEditingController();
   var listPrice = TextEditingController();
   var qtyTextEditController = TextEditingController();
-  final SlidableController slidableController = SlidableController();
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -120,9 +119,6 @@ class _CatalogPageState extends State<CatalogPage> {
                                     isHaveItemSelectedSnapshot.data ?? false;
                                 return Slidable(
                                   key: Key(snapshot.data![index].itemName),
-                                  controller: slidableController,
-                                  actionPane: SlidableDrawerActionPane(),
-                                  actionExtentRatio: 0.25,
                                   enabled: !isHaveItemSelected,
                                   child: ListTile(
                                     title: Text(snapshot.data![index].itemName),
@@ -142,22 +138,24 @@ class _CatalogPageState extends State<CatalogPage> {
                                     selectedColor: Colors.black,
                                     selectedTileColor: Colors.black12,
                                   ),
-                                  secondaryActions: <Widget>[
-                                    IconSlideAction(
-                                      caption: 'Edit',
-                                      color: Colors.black45,
-                                      icon: Icons.edit,
-                                      onTap: () =>
-                                          editItem(snapshot.data![index]),
-                                    ),
-                                    IconSlideAction(
-                                      caption: 'Delete',
-                                      color: Colors.red,
-                                      icon: Icons.delete,
-                                      onTap: () =>
-                                          deleteItem(snapshot.data![index]),
-                                    ),
-                                  ],
+                                  endActionPane: ActionPane(
+                                      motion: DrawerMotion(),
+                                      children: [
+                                        SlidableAction(
+                                          label: 'Edit',
+                                          backgroundColor: Colors.black45,
+                                          icon: Icons.edit,
+                                          onPressed: (_) =>
+                                              editItem(snapshot.data![index]),
+                                        ),
+                                        SlidableAction(
+                                          label: 'Delete',
+                                          backgroundColor: Colors.red,
+                                          icon: Icons.delete,
+                                          onPressed: (_) =>
+                                              deleteItem(snapshot.data![index]),
+                                        )
+                                      ]),
                                 );
                               });
                         },
