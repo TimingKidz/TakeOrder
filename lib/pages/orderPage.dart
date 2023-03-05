@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +13,7 @@ import 'package:invoice_manage/widget/exports_dialog.dart';
 import 'package:invoice_manage/widget/orderList_widget.dart';
 import 'package:invoice_manage/widget/yesno_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 

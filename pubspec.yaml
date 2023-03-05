@@ -26,17 +26,18 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  sqflite: ^2.0.0+3
-  path_provider: ^2.0.2
-  intl: ^0.17.0
-  flutter_slidable: ^0.6.0
-  url_launcher: ^6.0.6
-  shared_preferences: ^2.0.6
-  share: ^2.0.4
-  file_picker: ^4.3.0
-  contacts_service: ^0.6.3
-  permission_handler: ^8.1.6
+  cupertino_icons: ^1.0.5
+  sqflite: ^2.2.5
+  path_provider: ^2.0.13
+  intl: ^0.18.0
+  flutter_slidable: ^2.0.0
+  url_launcher: ^6.1.10
+  shared_preferences: ^2.0.18
+  share_plus: ^6.3.1
+  file: ^6.1.4
+  file_picker: ^5.2.5
+  flutter_contacts: ^1.1.6
+  permission_handler: ^10.2.0
   persistent_bottom_nav_bar_v2: ^4.2.6
 
 flutter_icons:
@@ -48,7 +49,7 @@ flutter_icons:
   adaptive_icon_foreground: "assets/icon/foreground.png"
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.9.0
+  flutter_launcher_icons: ^0.12.0
   flutter_test:
     sdk: flutter
 
